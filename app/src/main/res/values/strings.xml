@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ctrlable</string>
+    <string name="downstairs">Downstairs</string>
+    <string name="cancel">Cancel</string>
+    <string name="general">General</string>
+    <string name="control_screen">Control Screen</string>
+</resources>
