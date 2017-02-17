@@ -1,4 +1,4 @@
-package com.ron.ctrlable.ctrlable;
+package com.ron.ctrlable.ctrlable.views;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -6,13 +6,16 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
-import static com.ron.ctrlable.ctrlable.ZControlView.UserInteractionMode.*;
+import com.ron.ctrlable.ctrlable.adapters.ControlPanelViewAdapter;
+import com.ron.ctrlable.ctrlable.adapters.ZSideControlViewAdapter;
+
+import static com.ron.ctrlable.ctrlable.views.ControlPanelView.UserInteractionMode.*;
 
 /**
  * Created by Android Developer on 2/9/2017.
  */
 
-public class ZControlView extends RecyclerView {
+public class ControlPanelView extends RecyclerView {
 
     public enum UserInteractionMode {
         UserInteractionDisabled,
@@ -28,7 +31,7 @@ public class ZControlView extends RecyclerView {
     }
 
     private Context context;
-//    private ZControlViewAdapter adapter;
+//    private ControlPanelViewAdapter adapter;
     private RecyclerView.Adapter adapter;
     private int beginPosX = 0;
     private int beginPosY = 0;
@@ -39,16 +42,16 @@ public class ZControlView extends RecyclerView {
     private UserInteractionMode userInteractionMode = UserInteractionLayout;
 
 
-    public ZControlView(Context context) {
+    public ControlPanelView(Context context) {
         super(context);
         this.context = context;
     }
 
-    public ZControlView(Context context, @Nullable AttributeSet attrs) {
+    public ControlPanelView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ZControlView(Context context, @Nullable AttributeSet attrs, int defStyle) {
+    public ControlPanelView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
@@ -58,7 +61,7 @@ public class ZControlView extends RecyclerView {
         this.setLayoutManager(layoutManage);
     }
 
-    public void setAdapter(ZControlViewAdapter a, Context c) {
+    public void setAdapter(ControlPanelViewAdapter a, Context c) {
         this.adapter = a;
         this.context = c;
         super.setAdapter(adapter);

@@ -1,19 +1,15 @@
-package com.ron.ctrlable.ctrlable;
+package com.ron.ctrlable.ctrlable.activities;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.ron.ctrlable.ctrlable.R;
-
-import java.util.ArrayList;
 
 /**
  * Created by Android Developer on 2/12/2017.

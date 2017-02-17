@@ -1,4 +1,4 @@
-package com.ron.ctrlable.ctrlable;
+package com.ron.ctrlable.ctrlable.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -9,11 +9,15 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.ron.ctrlable.ctrlable.classes.ConfigurationClass;
+import com.ron.ctrlable.ctrlable.R;
+import com.ron.ctrlable.ctrlable.activities.SettingsActivity;
+
 /**
  * Created by Android Developer on 2/13/2017.
  */
 
-class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHolder> {
+public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHolder> {
 
     private Context context;
     private int[] buttonResourceArray = new int[]
@@ -28,7 +32,7 @@ class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHolder> {
     private String[] buttonTitleArray = new String[]
             {"General", "Ctrlable", "Network", "Files", "Colors", "Media", "Info", "Close"};
 
-    SettingsAdapter(Context context) {
+    public SettingsAdapter(Context context) {
         this.context = context;
     }
 

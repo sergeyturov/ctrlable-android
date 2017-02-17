@@ -1,19 +1,16 @@
-package com.ron.ctrlable.ctrlable;
+package com.ron.ctrlable.ctrlable.activities;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.Window;
 import android.widget.RelativeLayout;
 
-import com.ron.ctrlable.ctrlable.ConfigurationClass;
+import com.ron.ctrlable.ctrlable.classes.ConfigurationClass;
 import com.ron.ctrlable.ctrlable.R;
-import com.ron.ctrlable.ctrlable.SettingsAdapter;
+import com.ron.ctrlable.ctrlable.adapters.SettingsAdapter;
 
 /**
  * Created by Android Developer on 2/13/2017.

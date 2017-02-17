@@ -6,7 +6,7 @@
     android:background="@android:color/white"
     android:orientation="vertical"
     android:weightSum="10"
-    tools:context="com.ron.ctrlable.ctrlable.TypeSelectorActivity">
+    tools:context="com.ron.ctrlable.ctrlable.activities.TypeSelectorActivity">
 
     <Button
         android:id="@id/cancel_button"

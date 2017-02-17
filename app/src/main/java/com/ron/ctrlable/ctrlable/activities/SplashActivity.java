@@ -1,4 +1,4 @@
-package com.ron.ctrlable.ctrlable;
+package com.ron.ctrlable.ctrlable.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,6 +6,8 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.ImageView;
+
+import com.ron.ctrlable.ctrlable.R;
 
 /**
  * Created by Android Developer on 2/13/2017.

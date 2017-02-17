@@ -1,4 +1,4 @@
-package com.ron.ctrlable.ctrlable;
+package com.ron.ctrlable.ctrlable.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +8,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.ron.ctrlable.ctrlable.R;
+import com.ron.ctrlable.ctrlable.views.ControlPanelView;
 
 import java.util.ArrayList;
 
@@ -23,9 +26,9 @@ public class ZSideControlViewAdapter extends RecyclerView.Adapter<ZSideControlVi
     private ArrayList<Integer> multiSelPos = new ArrayList<>();
     private int device_width;
     private int device_height;
-    private ZControlView.UserInteractionMode userInteractionMode;
+    private ControlPanelView.UserInteractionMode userInteractionMode;
 
-    ZSideControlViewAdapter(Context c, int controlview_height, ZControlView.UserInteractionMode uim) {
+    public ZSideControlViewAdapter(Context c, int controlview_height, ControlPanelView.UserInteractionMode uim) {
         this.context = c;
         this.controlview_height = controlview_height;
         this.userInteractionMode = uim;
@@ -50,7 +53,7 @@ public class ZSideControlViewAdapter extends RecyclerView.Adapter<ZSideControlVi
         viewHolder.img_select.getLayoutParams().width = device_width / 4;
         viewHolder.img_select.getLayoutParams().height = controlview_height / 4;
 
-        if (userInteractionMode == ZControlView.UserInteractionMode.UserInteractionDisabled) {
+        if (userInteractionMode == ControlPanelView.UserInteractionMode.UserInteractionDisabled) {
             viewHolder.img_eidt.setVisibility(View.INVISIBLE);
         }
 
@@ -74,8 +77,8 @@ public class ZSideControlViewAdapter extends RecyclerView.Adapter<ZSideControlVi
         return 4;
     }
 
-    void selectMultiControlViews(ArrayList<Integer> selectedList) {
-        if (userInteractionMode == ZControlView.UserInteractionMode.UserInteractionLayout) {
+    public void selectMultiControlViews(ArrayList<Integer> selectedList) {
+        if (userInteractionMode == ControlPanelView.UserInteractionMode.UserInteractionLayout) {
             singleSelPos = -1;
             multiSelPos = selectedList;
             notifyDataSetChanged();

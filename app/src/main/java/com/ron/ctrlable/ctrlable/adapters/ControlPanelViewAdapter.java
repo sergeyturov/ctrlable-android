@@ -1,4 +1,4 @@
-package com.ron.ctrlable.ctrlable;
+package com.ron.ctrlable.ctrlable.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -9,31 +9,35 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.ron.ctrlable.ctrlable.classes.ConfigurationClass;
+import com.ron.ctrlable.ctrlable.R;
+import com.ron.ctrlable.ctrlable.views.ControlPanelView;
+
 import java.util.ArrayList;
 
-class ZControlViewAdapter extends RecyclerView.Adapter<ZControlViewAdapter.ViewHolder> {
+public class ControlPanelViewAdapter extends RecyclerView.Adapter<ControlPanelViewAdapter.ViewHolder> {
     private Context context;
     private int controlview_height;
     private int singleSelPos = -1;
     private ArrayList<Integer> multiSelPos = new ArrayList<>();
     private int device_width;
     private int device_height;
-    private ZControlView.UserInteractionMode userInteractionMode;
+    private ControlPanelView.UserInteractionMode userInteractionMode;
 
-    ZControlViewAdapter(Context c, int controlview_height, ZControlView.UserInteractionMode uim) {
+    public ControlPanelViewAdapter(Context c, int controlview_height, ControlPanelView.UserInteractionMode uim) {
         this.context = c;
         this.controlview_height = controlview_height;
         this.userInteractionMode = uim;
     }
 
     @Override
-    public ZControlViewAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public ControlPanelViewAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_control_view, viewGroup, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ZControlViewAdapter.ViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(ControlPanelViewAdapter.ViewHolder viewHolder, final int i) {
 
         device_width = context.getResources().getDisplayMetrics().widthPixels;
         device_height = context.getResources().getDisplayMetrics().heightPixels;
@@ -46,7 +50,7 @@ class ZControlViewAdapter extends RecyclerView.Adapter<ZControlViewAdapter.ViewH
         viewHolder.img_select.getLayoutParams().width = device_width / ConfigurationClass.rows;
         viewHolder.img_select.getLayoutParams().height = controlview_height / ConfigurationClass.columns;
 
-        if (userInteractionMode == ZControlView.UserInteractionMode.UserInteractionDisabled) {
+        if (userInteractionMode == ControlPanelView.UserInteractionMode.UserInteractionDisabled) {
             viewHolder.img_eidt.setVisibility(View.INVISIBLE);
         }
 
@@ -70,8 +74,8 @@ class ZControlViewAdapter extends RecyclerView.Adapter<ZControlViewAdapter.ViewH
         return ConfigurationClass.rows * ConfigurationClass.columns;
     }
 
-    void selectMultiControlViews(ArrayList<Integer> selectedList) {
-        if (userInteractionMode == ZControlView.UserInteractionMode.UserInteractionLayout) {
+    public void selectMultiControlViews(ArrayList<Integer> selectedList) {
+        if (userInteractionMode == ControlPanelView.UserInteractionMode.UserInteractionLayout) {
             singleSelPos = -1;
             multiSelPos = selectedList;
             notifyDataSetChanged();

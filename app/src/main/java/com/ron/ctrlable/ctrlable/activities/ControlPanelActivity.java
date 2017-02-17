@@ -1,10 +1,9 @@
-package com.ron.ctrlable.ctrlable;
+package com.ron.ctrlable.ctrlable.activities;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -14,6 +13,12 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.ron.ctrlable.ctrlable.classes.ConfigurationClass;
+import com.ron.ctrlable.ctrlable.R;
+import com.ron.ctrlable.ctrlable.views.ControlPanelView;
+import com.ron.ctrlable.ctrlable.adapters.ControlPanelViewAdapter;
+import com.ron.ctrlable.ctrlable.adapters.ZSideControlViewAdapter;
 
 import java.util.ArrayList;
 
@@ -34,9 +39,10 @@ public class ControlPanelActivity extends Activity {
     public Button networkIdicatorButton;
     public TextView titleTextView;
     public RelativeLayout controlView;
+    public RelativeLayout sideView;
 
-    ZControlView zControlView;
-    ZControlView zSideControlView;
+    ControlPanelView zControlView;
+    ControlPanelView zSideControlView;
     ArrayList<Integer> selectedViewList;
     ArrayList<Integer> selectedSideViewList;
 
@@ -50,7 +56,7 @@ public class ControlPanelActivity extends Activity {
     public int grid_rows;
     public int grid_columns;
 
-    private ZControlView.UserInteractionMode pcm;
+    private ControlPanelView.UserInteractionMode pcm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +65,7 @@ public class ControlPanelActivity extends Activity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_control_panel);
 
-        pcm = ZControlView.UserInteractionMode.UserInteractionDisabled;
+        pcm = ControlPanelView.UserInteractionMode.UserInteractionDisabled;
 
         setPanelControlMode();
         resetGrid();
@@ -85,6 +91,11 @@ public class ControlPanelActivity extends Activity {
         networkIdicatorButton = (Button) findViewById(R.id.network_indicator);
         networkIdicatorButton.setBackgroundResource(R.drawable.mios);
         titleTextView = (TextView) findViewById(R.id.title_text);
+
+        sideView = (RelativeLayout) findViewById(R.id.side_view);
+        if (!ConfigurationClass.isTablet(this)) {
+            sideView.setVisibility(View.GONE);
+        }
 
         switch (pcm) {
             case UserInteractionEnabled:
@@ -191,13 +202,13 @@ public class ControlPanelActivity extends Activity {
             @Override
             public void run() {
 
-                zControlView = (ZControlView) findViewById(R.id.control_recycler_view);
+                zControlView = (ControlPanelView) findViewById(R.id.control_recycler_view);
                 zControlView.setLayoutManager(ConfigurationClass.rows);
 
-                final ZControlViewAdapter adapter = new ZControlViewAdapter(getApplicationContext(), controlView.getMeasuredHeight(), pcm);
+                final ControlPanelViewAdapter adapter = new ControlPanelViewAdapter(getApplicationContext(), controlView.getMeasuredHeight(), pcm);
                 zControlView.setAdapter(adapter, getApplicationContext());
 
-                zSideControlView = (ZControlView) findViewById(R.id.side_recycler_view);
+                zSideControlView = (ControlPanelView) findViewById(R.id.side_recycler_view);
                 zSideControlView.setLayoutManager(1);
 
                 final ZSideControlViewAdapter sideAdapter = new ZSideControlViewAdapter(getApplicationContext(), controlView.getMeasuredHeight(), pcm);
@@ -223,7 +234,7 @@ public class ControlPanelActivity extends Activity {
                                         selectedViewList.add(i);
                                     }
                                 }
-                                if (selectedViewList.size() > 0 && pcm == ZControlView.UserInteractionMode.UserInteractionLayout) {
+                                if (selectedViewList.size() > 0 && pcm == ControlPanelView.UserInteractionMode.UserInteractionLayout) {
                                     adapter.selectMultiControlViews(selectedViewList);
                                     sideAdapter.selectMultiControlViews(selectedSideViewList);
                                     setupControlButton.setEnabled(true);
@@ -254,7 +265,7 @@ public class ControlPanelActivity extends Activity {
                                         selectedViewList.add(i);
                                     }
                                 }
-                                if (selectedViewList.size() > 0 && pcm == ZControlView.UserInteractionMode.UserInteractionLayout) {
+                                if (selectedViewList.size() > 0 && pcm == ControlPanelView.UserInteractionMode.UserInteractionLayout) {
                                     adapter.selectMultiControlViews(selectedViewList);
                                     sideAdapter.selectMultiControlViews(selectedSideViewList);
                                     setupControlButton.setEnabled(true);
@@ -290,7 +301,7 @@ public class ControlPanelActivity extends Activity {
                                         selectedSideViewList.add(i);
                                     }
                                 }
-                                if (selectedSideViewList.size() > 0 && pcm == ZControlView.UserInteractionMode.UserInteractionLayout) {
+                                if (selectedSideViewList.size() > 0 && pcm == ControlPanelView.UserInteractionMode.UserInteractionLayout) {
                                     adapter.selectMultiControlViews(selectedViewList);
                                     sideAdapter.selectMultiControlViews(selectedSideViewList);
                                     setupControlButton.setEnabled(true);
@@ -322,7 +333,7 @@ public class ControlPanelActivity extends Activity {
                                     }
                                 }
 
-                                if (selectedSideViewList.size() > 0 && pcm == ZControlView.UserInteractionMode.UserInteractionLayout) {
+                                if (selectedSideViewList.size() > 0 && pcm == ControlPanelView.UserInteractionMode.UserInteractionLayout) {
                                     adapter.selectMultiControlViews(selectedViewList);
                                     sideAdapter.selectMultiControlViews(selectedSideViewList);
                                     setupControlButton.setEnabled(true);
@@ -346,8 +357,8 @@ public class ControlPanelActivity extends Activity {
 
     public void onSetupControl(View view) {
 
-        if (pcm == ZControlView.UserInteractionMode.UserInteractionDisabled) {
-            pcm = ZControlView.UserInteractionMode.UserInteractionLayout;
+        if (pcm == ControlPanelView.UserInteractionMode.UserInteractionDisabled) {
+            pcm = ControlPanelView.UserInteractionMode.UserInteractionLayout;
             setPanelControlMode();
             resetGrid();
         } else {
@@ -377,14 +388,14 @@ public class ControlPanelActivity extends Activity {
 
     public void onSetupCancel(View view) {
 
-        pcm = ZControlView.UserInteractionMode.UserInteractionDisabled;
+        pcm = ControlPanelView.UserInteractionMode.UserInteractionDisabled;
         setPanelControlMode();
         resetGrid();
     }
 
     public void onSetupDone(View view) {
 
-        pcm = ZControlView.UserInteractionMode.UserInteractionDisabled;
+        pcm = ControlPanelView.UserInteractionMode.UserInteractionDisabled;
         setPanelControlMode();
         resetGrid();
     }
@@ -399,7 +410,7 @@ public class ControlPanelActivity extends Activity {
     // Side-by-side button clicked
     public void onSideButtonClicked(View view) {
         Log.d("Touched", "  Side Button");
-        zSideControlView = (ZControlView) findViewById(R.id.side_recycler_view);
+        zSideControlView = (ControlPanelView) findViewById(R.id.side_recycler_view);
         ViewGroup.LayoutParams params = zSideControlView.getLayoutParams();
         if (params.width == 0) {
             params.width = device_width / 4;
@@ -425,7 +436,7 @@ public class ControlPanelActivity extends Activity {
         for (int i = 0; i < 4; i++) {
             sideItemRects[i] = new Rect(0,
                     i * zControlView.getHeight() / 4,
-                    device_width/2,
+                    device_width / 2,
                     (i + 1) * zControlView.getHeight() / 4);
         }
     }
