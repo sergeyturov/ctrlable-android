@@ -207,9 +207,9 @@ public class ControlPanelActivity extends Activity {
                 setItemRects();
                 setSideItemRects();
 
-                zControlView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+                zControlView.setOnTouchListener(new View.OnTouchListener() {
                     @Override
-                    public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                    public boolean onTouch(View v, MotionEvent e) {
                         switch (e.getAction()) {
                             case MotionEvent.ACTION_DOWN:
                                 // touch down code
@@ -223,17 +223,9 @@ public class ControlPanelActivity extends Activity {
                                         selectedViewList.add(i);
                                     }
                                 }
-                                for (int i = 0; i < 4; i++) {
-                                    if (Rect.intersects(rect, sideItemRects[i])) {
-                                        selectedSideViewList.add(i);
-                                    }
-                                }
                                 if (selectedViewList.size() > 0 && pcm == ZControlView.UserInteractionMode.UserInteractionLayout) {
-                                    if (zSideControlView.getLayoutParams().width == 0) {
-                                        adapter.selectMultiControlViews(selectedViewList);
-                                    } else {
-                                        sideAdapter.selectMultiControlViews(selectedSideViewList);
-                                    }
+                                    adapter.selectMultiControlViews(selectedViewList);
+                                    sideAdapter.selectMultiControlViews(selectedSideViewList);
                                     setupControlButton.setEnabled(true);
                                     setupControlButton.setAlpha(1.0f);
                                     setupControlButton.setBackgroundResource(R.drawable.add);
@@ -264,6 +256,8 @@ public class ControlPanelActivity extends Activity {
                                 }
                                 if (selectedViewList.size() > 0 && pcm == ZControlView.UserInteractionMode.UserInteractionLayout) {
                                     adapter.selectMultiControlViews(selectedViewList);
+                                    sideAdapter.selectMultiControlViews(selectedSideViewList);
+                                    setupControlButton.setEnabled(true);
                                     setupControlButton.setEnabled(true);
                                     setupControlButton.setAlpha(1.0f);
                                     setupControlButton.setBackgroundResource(R.drawable.add);
@@ -278,15 +272,72 @@ public class ControlPanelActivity extends Activity {
                         }
                         return false;
                     }
+                });
 
+                zSideControlView.setOnTouchListener(new View.OnTouchListener() {
                     @Override
-                    public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+                    public boolean onTouch(View v, MotionEvent event) {
+                        switch (event.getAction()) {
+                            case MotionEvent.ACTION_DOWN:
+                                // touch down code
+                                beginPosX = (int) event.getX();
+                                beginPosY = (int) event.getY();
+                                Rect rect = new Rect(beginPosX, beginPosY, beginPosX + 1, beginPosY + 1);
+                                selectedViewList = new ArrayList<>();
+                                selectedSideViewList = new ArrayList<>();
+                                for (int i = 0; i < 4; i++) {
+                                    if (Rect.intersects(rect, sideItemRects[i])) {
+                                        selectedSideViewList.add(i);
+                                    }
+                                }
+                                if (selectedSideViewList.size() > 0 && pcm == ZControlView.UserInteractionMode.UserInteractionLayout) {
+                                    adapter.selectMultiControlViews(selectedViewList);
+                                    sideAdapter.selectMultiControlViews(selectedSideViewList);
+                                    setupControlButton.setEnabled(true);
+                                    setupControlButton.setAlpha(1.0f);
+                                    setupControlButton.setBackgroundResource(R.drawable.add);
+                                    gridButton.setEnabled(true);
+                                    gridButton.setAlpha(1.0f);
+                                }
+                                break;
 
-                    }
+                            case MotionEvent.ACTION_MOVE:
+                                // touch move code
+                                endPosX = (int) event.getX();
+                                endPosY = (int) event.getY();
+                                Log.d("Touch move position", String.valueOf(endPosX));
+                                Log.d("Touch move position", String.valueOf(endPosY));
 
-                    @Override
-                    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+                                rect = new Rect(Math.min(beginPosX, endPosX),
+                                        Math.min(beginPosY, endPosY),
+                                        Math.max(beginPosX, endPosX),
+                                        Math.max(beginPosY, endPosY));
 
+                                selectedViewList = new ArrayList<>();
+                                selectedSideViewList = new ArrayList<>();
+                                for (int i = 0; i < 4; i++) {
+                                    if (Rect.intersects(rect, sideItemRects[i])) {
+                                        Log.d("Selected", String.valueOf(i + 1));
+                                        selectedSideViewList.add(i);
+                                    }
+                                }
+
+                                if (selectedSideViewList.size() > 0 && pcm == ZControlView.UserInteractionMode.UserInteractionLayout) {
+                                    adapter.selectMultiControlViews(selectedViewList);
+                                    sideAdapter.selectMultiControlViews(selectedSideViewList);
+                                    setupControlButton.setEnabled(true);
+                                    setupControlButton.setAlpha(1.0f);
+                                    setupControlButton.setBackgroundResource(R.drawable.add);
+                                    gridButton.setEnabled(true);
+                                    gridButton.setAlpha(1.0f);
+                                }
+                                break;
+
+                            case MotionEvent.ACTION_UP:
+                                // touch up code
+                                break;
+                        }
+                        return false;
                     }
                 });
             }
@@ -373,8 +424,8 @@ public class ControlPanelActivity extends Activity {
         sideItemRects = new Rect[4];
         for (int i = 0; i < 4; i++) {
             sideItemRects[i] = new Rect(0,
-                    (i) * zControlView.getHeight() / 4,
-                    (i + 1) * device_width,
+                    i * zControlView.getHeight() / 4,
+                    device_width/2,
                     (i + 1) * zControlView.getHeight() / 4);
         }
     }
