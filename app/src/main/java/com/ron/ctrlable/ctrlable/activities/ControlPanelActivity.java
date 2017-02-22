@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -18,6 +19,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.ron.ctrlable.ctrlable.adapters.ControlPanelPageAdapter;
 import com.ron.ctrlable.ctrlable.classes.ConfigurationClass;
 import com.ron.ctrlable.ctrlable.R;
 import com.ron.ctrlable.ctrlable.interfaces.ChildViewListener;
@@ -25,6 +27,7 @@ import com.ron.ctrlable.ctrlable.views.ControlPanelView;
 import com.ron.ctrlable.ctrlable.adapters.ControlPanelViewAdapter;
 import com.ron.ctrlable.ctrlable.adapters.ZSideControlViewAdapter;
 import com.ron.ctrlable.ctrlable.views.ControlScreenView;
+import com.ron.ctrlable.ctrlable.views.ViewPagerCustomDuration;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -32,7 +35,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
-import java.util.ResourceBundle;
 
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.SCREEN_FORMAT_ARRAY;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.controlsObject;
@@ -62,6 +64,8 @@ public class ControlPanelActivity extends Activity {
     public TextView titleTextView;
     public RelativeLayout controlView;
     public RelativeLayout sideView;
+    public ViewPager controlPanelPager;
+    public ViewPagerCustomDuration vp;
 
     ControlPanelView zControlView;
     ControlPanelView zSideControlView;
@@ -99,6 +103,21 @@ public class ControlPanelActivity extends Activity {
         setPanelControlMode();
         resetGrid();
         setChildViewListener();
+
+        controlPanelPager = (ViewPager) findViewById(R.id.viewpager);
+        controlPanelPager.setAdapter(new ControlPanelPageAdapter(ControlPanelActivity.this));
+        controlPanelPager.setPageTransformer(false, new ViewPager.PageTransformer() {
+            @Override
+            public void transformPage(View page, float position) {
+                if (position == 1) {
+                    page.setAlpha(0.5f);
+                }
+            }
+        });
+
+        vp = (ViewPagerCustomDuration) findViewById(R.id.control_panel_pager);
+        vp.setAdapter(new ControlPanelPageAdapter((ControlPanelActivity.this)));
+        vp.setScrollDurationFactor(2); // make the animation twice as slow
 
         Log.d("Tablet Mode:", String.valueOf(ConfigurationClass.isTablet(this)));
     }
@@ -389,8 +408,28 @@ public class ControlPanelActivity extends Activity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void goToNextControlPanel() {
+        vp.setScrollDurationFactor(5);
+        vp.setCurrentItem(2);
+//        controlPanelPager.setCurrentItem(2, true);
 
+//        ControlPanelView controlPanelView = (ControlPanelView) findViewById(R.id.control_recycler_view);
+//        RelativeLayout customLayout = new RelativeLayout(this);
+//        if (controlPanelView.getParent() != null) {
+//            ((ViewGroup) controlPanelView.getParent()).removeView(controlPanelView);
+//        }
+//        customLayout.addView(controlPanelView);
+//
+//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        customLayout.setLayoutParams(params);
+//        customLayout.setBackgroundColor(getColor(R.color.colorAccent));
+//        controlView.addView(customLayout);
+//
+////        zControlView.setLayoutManager(ConfigurationClass.rows);
+////
+////        final ControlPanelViewAdapter adapter = new ControlPanelViewAdapter(ControlPanelActivity.this, controlView.getMeasuredHeight(), pcm);
+////        zControlView.setAdapter(adapter, getApplicationContext());
     }
 
     // set the Add/Edit button from the selected controls.

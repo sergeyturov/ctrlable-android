@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_control_panel"
     android:layout_width="match_parent"
@@ -12,52 +11,52 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="42dp"
-        android:paddingTop="5dp"
+        android:background="#01b4be"
         android:paddingBottom="3dp"
-        android:background="#01b4be">
+        android:paddingTop="5dp">
 
         <Button
             android:id="@+id/setup_control_button"
             android:layout_width="@dimen/menu_button_width"
             android:layout_height="@dimen/menu_button_height"
-            android:layout_marginLeft="3dp"
             android:layout_alignParentLeft="true"
+            android:layout_marginLeft="3dp"
             android:background="@drawable/settings"
-            android:onClick="onSetupControl"/>
+            android:onClick="onSetupControl" />
 
         <Button
             android:id="@+id/grid_button"
             android:layout_width="@dimen/menu_button_width"
             android:layout_height="@dimen/menu_button_height"
-            android:layout_toRightOf="@+id/setup_control_button"
             android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/setup_control_button"
             android:background="@drawable/grid"
-            android:onClick="setGridSize"/>
+            android:onClick="setGridSize" />
 
         <Button
             android:id="@+id/up_button"
             android:layout_width="@dimen/menu_button_width"
             android:layout_height="@dimen/menu_button_height"
-            android:layout_toRightOf="@+id/setup_control_button"
             android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/setup_control_button"
             android:background="@drawable/navhome"
-            android:onClick="onNavigate"/>
+            android:onClick="onNavigate" />
 
         <Button
             android:id="@+id/link_button"
             android:layout_width="@dimen/menu_button_width"
             android:layout_height="@dimen/menu_button_height"
-            android:layout_toRightOf="@+id/grid_button"
             android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/grid_button"
             android:background="@drawable/link"
-            android:onClick="onSetupLink"/>
+            android:onClick="onSetupLink" />
 
         <Button
             android:id="@+id/delete_button"
             android:layout_width="@dimen/menu_button_width"
             android:layout_height="@dimen/menu_button_height"
-            android:layout_toRightOf="@+id/link_button"
             android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/link_button"
             android:background="@drawable/delete"
             android:onClick="onDelete" />
 
@@ -65,85 +64,85 @@
             android:id="@+id/setup_button"
             android:layout_width="@dimen/menu_button_width"
             android:layout_height="@dimen/menu_button_height"
-            android:layout_toRightOf="@+id/delete_button"
             android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/delete_button"
             android:background="@drawable/setupcontrol"
-            android:onClick="onSetup"/>
+            android:onClick="onSetup" />
 
         <Button
             android:id="@+id/help_button"
             android:layout_width="@dimen/menu_button_width"
             android:layout_height="@dimen/menu_button_height"
-            android:layout_toLeftOf="@+id/settings_button"
             android:layout_marginLeft="5dp"
-            android:textSize="25sp"
-            android:textColor="#007aff"
+            android:layout_toLeftOf="@+id/settings_button"
             android:background="@drawable/help"
-            android:onClick="onSetup"/>
+            android:onClick="onSetup"
+            android:textColor="#007aff"
+            android:textSize="25sp" />
 
         <Button
             android:id="@+id/settings_button"
             android:layout_width="@dimen/menu_button_width"
             android:layout_height="@dimen/menu_button_height"
-            android:layout_toLeftOf="@+id/save_button"
             android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/save_button"
             android:background="@drawable/infobtn"
-            android:onClick="showSettings"/>
+            android:onClick="showSettings" />
 
         <Button
             android:id="@+id/cancel_button"
             android:layout_width="@dimen/menu_button_width"
             android:layout_height="@dimen/menu_button_height"
-            android:layout_toLeftOf="@+id/save_button"
             android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/save_button"
             android:background="@drawable/cancel"
-            android:onClick="onSetupCancel"/>
+            android:onClick="onSetupCancel" />
 
         <Button
             android:id="@+id/save_button"
             android:layout_width="@dimen/menu_button_width"
             android:layout_height="@dimen/menu_button_height"
-            android:layout_toLeftOf="@+id/network_indicator"
             android:layout_marginRight="6dp"
+            android:layout_toLeftOf="@+id/network_indicator"
             android:background="@drawable/save"
-            android:onClick="onSetupDone"/>
+            android:onClick="onSetupDone" />
 
         <Button
             android:id="@+id/right_button"
             android:layout_width="25dp"
             android:layout_height="@dimen/menu_button_height"
-            android:layout_toLeftOf="@+id/network_indicator"
             android:layout_marginRight="20dp"
+            android:layout_toLeftOf="@+id/network_indicator"
             android:background="@drawable/navright"
-            android:onClick="onNavigate"/>
+            android:onClick="onNavigate" />
 
         <Button
             android:id="@+id/left_button"
             android:layout_width="25dp"
             android:layout_height="@dimen/menu_button_height"
-            android:layout_toLeftOf="@+id/right_button"
             android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/right_button"
             android:background="@drawable/navleft"
-            android:onClick="onNavigate"/>
+            android:onClick="onNavigate" />
 
         <Button
             android:id="@+id/network_indicator"
             android:layout_width="@dimen/menu_button_width"
             android:layout_height="@dimen/menu_button_height"
-            android:layout_marginRight="3dp"
             android:layout_alignParentRight="true"
+            android:layout_marginRight="3dp"
             android:background="@drawable/wifi"
-            android:onClick="onReconnect"/>
-        
+            android:onClick="onReconnect" />
+
         <TextView
             android:id="@+id/title_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:textSize="23sp"
             android:text="@string/downstairs"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white"
+            android:textSize="23sp" />
 
     </RelativeLayout>
 
@@ -157,11 +156,20 @@
             android:id="@+id/control_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical"
-            android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true">
-        </com.ron.ctrlable.ctrlable.views.ControlPanelView>
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:scrollbars="vertical" />
+
+        <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.ron.ctrlable.ctrlable.views.ViewPagerCustomDuration
+            android:id="@+id/control_panel_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <RelativeLayout
             android:id="@+id/side_view"
@@ -170,23 +178,22 @@
 
             <com.ron.ctrlable.ctrlable.views.ControlPanelView
                 android:id="@+id/side_recycler_view"
-                android:background="#333333"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:scrollbars="vertical"
-                android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true">
-            </com.ron.ctrlable.ctrlable.views.ControlPanelView>
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:background="#333333"
+                android:scrollbars="vertical" />
 
             <ImageView
                 android:id="@+id/img_side_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/side_recycler_view"
                 android:layout_centerVertical="true"
-                android:src="@drawable/hometab_vertical"
-                android:onClick="onSideButtonClicked"/>
+                android:layout_toRightOf="@id/side_recycler_view"
+                android:onClick="onSideButtonClicked"
+                android:src="@drawable/hometab_vertical" />
         </RelativeLayout>
     </RelativeLayout>
 </LinearLayout>

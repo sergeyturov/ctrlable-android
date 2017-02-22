@@ -63,7 +63,7 @@ public class ControlScreenView extends RelativeLayout {
                 if (pcm == ControlPanelView.UserInteractionMode.UserInteractionDisabled) {
                     Log.d("Touched", String.valueOf(pcm));
                     if(context instanceof ControlPanelActivity) {
-                        ((ControlPanelActivity) context).resetGrid();
+                        ((ControlPanelActivity) context).goToNextControlPanel();
                     }
                 }
                 return false;
