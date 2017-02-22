@@ -1,9 +1,13 @@
 package com.ron.ctrlable.ctrlable.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -16,11 +20,29 @@ import android.widget.TextView;
 
 import com.ron.ctrlable.ctrlable.classes.ConfigurationClass;
 import com.ron.ctrlable.ctrlable.R;
+import com.ron.ctrlable.ctrlable.interfaces.ChildViewListener;
 import com.ron.ctrlable.ctrlable.views.ControlPanelView;
 import com.ron.ctrlable.ctrlable.adapters.ControlPanelViewAdapter;
 import com.ron.ctrlable.ctrlable.adapters.ZSideControlViewAdapter;
+import com.ron.ctrlable.ctrlable.views.ControlScreenView;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
+import java.util.ResourceBundle;
+
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.SCREEN_FORMAT_ARRAY;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.controlsObject;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.currentScreenIndex;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.current_view;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.getStringSharedPreferences;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.initializeControlsJson;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.pcm;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.selectedItemsIndex;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.setStringSharedPreferences;
 
 public class ControlPanelActivity extends Activity {
 
@@ -45,6 +67,10 @@ public class ControlPanelActivity extends Activity {
     ControlPanelView zSideControlView;
     ArrayList<Integer> selectedViewList;
     ArrayList<Integer> selectedSideViewList;
+    static Context context;
+
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
     int device_width;
     private int beginPosX = 0;
@@ -53,14 +79,17 @@ public class ControlPanelActivity extends Activity {
     private int endPosY = 0;
     private Rect[] itemRects;
     private Rect[] sideItemRects;
+    private int screenIndex = 0; // If 0 sideview, else parent/subscreen control panel.
+
     public int grid_rows;
     public int grid_columns;
 
-    private ControlPanelView.UserInteractionMode pcm;
+//    private ControlPanelView.UserInteractionMode pcm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this;
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_control_panel);
@@ -69,8 +98,25 @@ public class ControlPanelActivity extends Activity {
 
         setPanelControlMode();
         resetGrid();
+        setChildViewListener();
 
         Log.d("Tablet Mode:", String.valueOf(ConfigurationClass.isTablet(this)));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        resetGrid();
+    }
+
+    public void setChildViewListener() {
+        ControlScreenView controlScreenView = new ControlScreenView(this);
+        controlScreenView.setControlScreenViewListener(new ChildViewListener() {
+            @Override
+            public void onViewTapped() {
+                Log.d("Tapped", "OK");
+            }
+        });
     }
 
     public void setPanelControlMode() {
@@ -196,8 +242,9 @@ public class ControlPanelActivity extends Activity {
         ConfigurationClass.rows = grid_rows;
         ConfigurationClass.columns = grid_columns;
 
-        controlView = (RelativeLayout) findViewById(R.id.control_view);
+        initializeControlsJson(ControlPanelActivity.this);
 
+        controlView = (RelativeLayout) findViewById(R.id.control_view);
         controlView.post(new Runnable() {
             @Override
             public void run() {
@@ -205,13 +252,13 @@ public class ControlPanelActivity extends Activity {
                 zControlView = (ControlPanelView) findViewById(R.id.control_recycler_view);
                 zControlView.setLayoutManager(ConfigurationClass.rows);
 
-                final ControlPanelViewAdapter adapter = new ControlPanelViewAdapter(getApplicationContext(), controlView.getMeasuredHeight(), pcm);
+                final ControlPanelViewAdapter adapter = new ControlPanelViewAdapter(ControlPanelActivity.this, controlView.getMeasuredHeight(), pcm);
                 zControlView.setAdapter(adapter, getApplicationContext());
 
                 zSideControlView = (ControlPanelView) findViewById(R.id.side_recycler_view);
                 zSideControlView.setLayoutManager(1);
 
-                final ZSideControlViewAdapter sideAdapter = new ZSideControlViewAdapter(getApplicationContext(), controlView.getMeasuredHeight(), pcm);
+                final ZSideControlViewAdapter sideAdapter = new ZSideControlViewAdapter(ControlPanelActivity.this, controlView.getMeasuredHeight(), pcm);
                 zSideControlView.setSideViewAdapter(sideAdapter, getApplicationContext());
 
                 // Get the Rects of the each recyclerview items.
@@ -237,11 +284,8 @@ public class ControlPanelActivity extends Activity {
                                 if (selectedViewList.size() > 0 && pcm == ControlPanelView.UserInteractionMode.UserInteractionLayout) {
                                     adapter.selectMultiControlViews(selectedViewList);
                                     sideAdapter.selectMultiControlViews(selectedSideViewList);
-                                    setupControlButton.setEnabled(true);
-                                    setupControlButton.setAlpha(1.0f);
-                                    setupControlButton.setBackgroundResource(R.drawable.add);
-                                    gridButton.setEnabled(true);
-                                    gridButton.setAlpha(1.0f);
+
+                                    setAddControlsMode(selectedViewList, 0, getString(R.string.control_panel_view));
                                 }
                                 break;
 
@@ -268,12 +312,8 @@ public class ControlPanelActivity extends Activity {
                                 if (selectedViewList.size() > 0 && pcm == ControlPanelView.UserInteractionMode.UserInteractionLayout) {
                                     adapter.selectMultiControlViews(selectedViewList);
                                     sideAdapter.selectMultiControlViews(selectedSideViewList);
-                                    setupControlButton.setEnabled(true);
-                                    setupControlButton.setEnabled(true);
-                                    setupControlButton.setAlpha(1.0f);
-                                    setupControlButton.setBackgroundResource(R.drawable.add);
-                                    gridButton.setEnabled(true);
-                                    gridButton.setAlpha(1.0f);
+
+                                    setAddControlsMode(selectedViewList, 0, getString(R.string.control_panel_view));
                                 }
                                 break;
 
@@ -304,11 +344,8 @@ public class ControlPanelActivity extends Activity {
                                 if (selectedSideViewList.size() > 0 && pcm == ControlPanelView.UserInteractionMode.UserInteractionLayout) {
                                     adapter.selectMultiControlViews(selectedViewList);
                                     sideAdapter.selectMultiControlViews(selectedSideViewList);
-                                    setupControlButton.setEnabled(true);
-                                    setupControlButton.setAlpha(1.0f);
-                                    setupControlButton.setBackgroundResource(R.drawable.add);
-                                    gridButton.setEnabled(true);
-                                    gridButton.setAlpha(1.0f);
+
+                                    setAddControlsMode(selectedSideViewList, 0, getString(R.string.side_view));
                                 }
                                 break;
 
@@ -336,11 +373,8 @@ public class ControlPanelActivity extends Activity {
                                 if (selectedSideViewList.size() > 0 && pcm == ControlPanelView.UserInteractionMode.UserInteractionLayout) {
                                     adapter.selectMultiControlViews(selectedViewList);
                                     sideAdapter.selectMultiControlViews(selectedSideViewList);
-                                    setupControlButton.setEnabled(true);
-                                    setupControlButton.setAlpha(1.0f);
-                                    setupControlButton.setBackgroundResource(R.drawable.add);
-                                    gridButton.setEnabled(true);
-                                    gridButton.setAlpha(1.0f);
+
+                                    setAddControlsMode(selectedSideViewList, 0, getString(R.string.side_view));
                                 }
                                 break;
 
@@ -353,6 +387,44 @@ public class ControlPanelActivity extends Activity {
                 });
             }
         });
+    }
+
+    public void goToNextControlPanel() {
+
+    }
+
+    // set the Add/Edit button from the selected controls.
+    public void setAddControlsMode(ArrayList<Integer> selectedViews, int screenIndex, String currentViewMode) {
+
+        selectedItemsIndex = selectedViews;
+        currentScreenIndex = screenIndex;
+        current_view = currentViewMode;
+
+        JSONArray allControls = (JSONArray) controlsObject.get(current_view);
+        JSONArray screenControls = (JSONArray) allControls.get(currentScreenIndex);
+        boolean temp_flag = false;
+        for (int i = 0; i < selectedItemsIndex.size(); i++) {
+            JSONObject itemObj = (JSONObject) screenControls.get(selectedItemsIndex.get(i));
+            if (itemObj.size() > 0) {
+                temp_flag = true;
+                break;
+            }
+        }
+
+        if (temp_flag) {
+            setupControlButton.setEnabled(false);
+            setupControlButton.setAlpha(0.5f);
+            setupControlButton.setBackgroundResource(R.drawable.settings);
+            gridButton.setEnabled(true);
+            gridButton.setAlpha(1.0f);
+
+        } else {
+            setupControlButton.setEnabled(true);
+            setupControlButton.setAlpha(1.0f);
+            setupControlButton.setBackgroundResource(R.drawable.add);
+            gridButton.setEnabled(true);
+            gridButton.setAlpha(1.0f);
+        }
     }
 
     public void onSetupControl(View view) {
@@ -388,12 +460,25 @@ public class ControlPanelActivity extends Activity {
 
     public void onSetupCancel(View view) {
 
+        String json = getStringSharedPreferences(context, SCREEN_FORMAT_ARRAY);
+        JSONParser parser = new JSONParser();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject = (JSONObject) parser.parse(json);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        controlsObject = jsonObject;
+
         pcm = ControlPanelView.UserInteractionMode.UserInteractionDisabled;
         setPanelControlMode();
         resetGrid();
     }
 
     public void onSetupDone(View view) {
+
+        setStringSharedPreferences(getApplicationContext(), SCREEN_FORMAT_ARRAY, controlsObject.toString());
 
         pcm = ControlPanelView.UserInteractionMode.UserInteractionDisabled;
         setPanelControlMode();

@@ -3,5 +3,10 @@
     <string name="downstairs">Downstairs</string>
     <string name="cancel">Cancel</string>
     <string name="general">General</string>
-    <string name="control_screen">Control Screen</string>
+
+    <string name="side_view">Left Side View</string>
+    <string name="control_panel_view">Home Control Panel View</string>
+    <string name="view_name">Control View Name</string>
+
+    <string name="control_screen">[Control Screen]</string>
 </resources>

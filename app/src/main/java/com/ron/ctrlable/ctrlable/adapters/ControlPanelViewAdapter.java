@@ -1,6 +1,10 @@
 package com.ron.ctrlable.ctrlable.adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,12 +12,24 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
+import com.ron.ctrlable.ctrlable.activities.ControlPanelActivity;
 import com.ron.ctrlable.ctrlable.classes.ConfigurationClass;
 import com.ron.ctrlable.ctrlable.R;
 import com.ron.ctrlable.ctrlable.views.ControlPanelView;
+import com.ron.ctrlable.ctrlable.views.ControlScreenView;
+
+import org.json.simple.JSONArray;
+import org.json.JSONException;
+import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Objects;
+
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.controlsObject;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.currentScreenIndex;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.current_view;
 
 public class ControlPanelViewAdapter extends RecyclerView.Adapter<ControlPanelViewAdapter.ViewHolder> {
     private Context context;
@@ -23,6 +39,9 @@ public class ControlPanelViewAdapter extends RecyclerView.Adapter<ControlPanelVi
     private int device_width;
     private int device_height;
     private ControlPanelView.UserInteractionMode userInteractionMode;
+
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
     public ControlPanelViewAdapter(Context c, int controlview_height, ControlPanelView.UserInteractionMode uim) {
         this.context = c;
@@ -36,11 +55,15 @@ public class ControlPanelViewAdapter extends RecyclerView.Adapter<ControlPanelVi
         return new ViewHolder(view);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onBindViewHolder(ControlPanelViewAdapter.ViewHolder viewHolder, final int i) {
 
         device_width = context.getResources().getDisplayMetrics().widthPixels;
         device_height = context.getResources().getDisplayMetrics().heightPixels;
+
+        viewHolder.view_control.getLayoutParams().width = device_width / ConfigurationClass.rows;
+        viewHolder.view_control.getLayoutParams().height = controlview_height / ConfigurationClass.columns;
 
         viewHolder.img_eidt.setBackgroundResource(R.drawable.control_edit_mark);
         viewHolder.img_eidt.getLayoutParams().width = device_width / ConfigurationClass.rows;
@@ -49,6 +72,7 @@ public class ControlPanelViewAdapter extends RecyclerView.Adapter<ControlPanelVi
         viewHolder.img_select.setBackgroundResource(R.drawable.control_select_mark);
         viewHolder.img_select.getLayoutParams().width = device_width / ConfigurationClass.rows;
         viewHolder.img_select.getLayoutParams().height = controlview_height / ConfigurationClass.columns;
+
 
         if (userInteractionMode == ControlPanelView.UserInteractionMode.UserInteractionDisabled) {
             viewHolder.img_eidt.setVisibility(View.INVISIBLE);
@@ -66,6 +90,15 @@ public class ControlPanelViewAdapter extends RecyclerView.Adapter<ControlPanelVi
             } else {
                 viewHolder.img_select.setVisibility(View.INVISIBLE);
             }
+        }
+
+        JSONArray screenControls = (JSONArray) ((JSONArray) controlsObject.get(context.getString(R.string.control_panel_view))).get(currentScreenIndex);
+        JSONObject itemObj = (JSONObject) screenControls.get(i);
+        if (Objects.equals(itemObj.get(context.getString(R.string.view_name)), context.getString(R.string.control_screen))) {
+//            View view = LayoutInflater.from(context).inflate(R.layout.item_control_screen, null);
+            View view = new ControlScreenView(context);
+            viewHolder.view_control.addView(view);
+            viewHolder.img_eidt.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -86,12 +119,14 @@ public class ControlPanelViewAdapter extends RecyclerView.Adapter<ControlPanelVi
 
         private ImageView img_eidt;
         private ImageView img_select;
+        private RelativeLayout view_control;
 
         ViewHolder(View view) {
             super(view);
 
             img_eidt = (ImageView) view.findViewById(R.id.edit_mark_img);
             img_select = (ImageView) view.findViewById(R.id.select_mark_img);
+            view_control = (RelativeLayout) view.findViewById(R.id.control_view);
 
             view.setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -117,6 +152,6 @@ public class ControlPanelViewAdapter extends RecyclerView.Adapter<ControlPanelVi
                     return false;
                 }
             });
-       }
+        }
     }
 }

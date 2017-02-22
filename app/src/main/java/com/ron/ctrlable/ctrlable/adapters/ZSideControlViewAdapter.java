@@ -1,6 +1,8 @@
 package com.ron.ctrlable.ctrlable.adapters;
 
 import android.content.Context;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,11 +10,22 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.ron.ctrlable.ctrlable.R;
+import com.ron.ctrlable.ctrlable.classes.ConfigurationClass;
 import com.ron.ctrlable.ctrlable.views.ControlPanelView;
+import com.ron.ctrlable.ctrlable.views.ControlScreenView;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Objects;
+
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.controlsObject;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.currentScreenIndex;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.current_view;
 
 /**
  * Created by Android Developer on 2/17/2017.
@@ -40,10 +53,14 @@ public class ZSideControlViewAdapter extends RecyclerView.Adapter<ZSideControlVi
         return new ZSideControlViewAdapter.ViewHolder(view);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onBindViewHolder(ZSideControlViewAdapter.ViewHolder viewHolder, int position) {
         device_width = context.getResources().getDisplayMetrics().widthPixels;
         device_height = context.getResources().getDisplayMetrics().heightPixels;
+
+        viewHolder.view_control.getLayoutParams().width = device_width/4;
+        viewHolder.view_control.getLayoutParams().height = controlview_height/4;
 
         viewHolder.img_eidt.setBackgroundResource(R.drawable.control_edit_mark);
         viewHolder.img_eidt.getLayoutParams().width = device_width / 4;
@@ -70,6 +87,15 @@ public class ZSideControlViewAdapter extends RecyclerView.Adapter<ZSideControlVi
                 viewHolder.img_select.setVisibility(View.INVISIBLE);
             }
         }
+
+        JSONArray screenControls = (JSONArray) ((JSONArray) controlsObject.get(context.getString(R.string.side_view))).get(currentScreenIndex);
+        JSONObject itemObj = (JSONObject) screenControls.get(position);
+        if (Objects.equals(itemObj.get(context.getString(R.string.view_name)), context.getString(R.string.control_screen))) {
+//            View view = LayoutInflater.from(context).inflate(R.layout.item_control_screen, null);
+            View view = new ControlScreenView(context);
+            viewHolder.view_control.addView(view);
+            viewHolder.img_eidt.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -89,12 +115,14 @@ public class ZSideControlViewAdapter extends RecyclerView.Adapter<ZSideControlVi
 
         private ImageView img_eidt;
         private ImageView img_select;
+        private RelativeLayout view_control;
 
         ViewHolder(View view) {
             super(view);
 
             img_eidt = (ImageView) view.findViewById(R.id.edit_mark_img);
             img_select = (ImageView) view.findViewById(R.id.select_mark_img);
+            view_control = (RelativeLayout) view.findViewById(R.id.control_view);
 
             view.setOnTouchListener(new View.OnTouchListener() {
                 @Override

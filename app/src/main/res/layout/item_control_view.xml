@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/control_view"
+        android:layout_width="match_parent"
+        android:layout_height="90sp" />
+
     <ImageView
         android:id="@+id/edit_mark_img"
         android:layout_width="match_parent"
@@ -13,8 +18,7 @@
     <ImageView
         android:id="@+id/select_mark_img"
         android:layout_width="match_parent"
-        android:background="@color/colorAccent"
         android:layout_height="100sp"
+        android:background="@color/colorAccent"
         android:contentDescription="" />
-
 </RelativeLayout>
