@@ -30,4 +30,5 @@ dependencies {
     compile 'com.android.support:support-v4:25.1.0'
     compile 'com.android.support:recyclerview-v7:25.1.0'
     compile 'com.google.code.gson:gson:2.8.0'
+    compile 'rongi.rotate-layout:rotate-layout:3.0.0'
 }

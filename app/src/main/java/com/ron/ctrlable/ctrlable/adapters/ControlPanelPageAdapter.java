@@ -75,7 +75,7 @@ public class ControlPanelPageAdapter extends PagerAdapter {
                         Rect rect = new Rect(beginPosX, beginPosY, beginPosX + 1, beginPosY + 1);
                         selectedViewList = new ArrayList<>();
                         selectedSideViewList = new ArrayList<>();
-                        for (int i = 0; i < rows*columns; i++) {
+                        for (int i = 0; i < rows * columns; i++) {
                             if (Rect.intersects(rect, itemRects[i])) {
                                 selectedViewList.add(i);
                             }
@@ -84,7 +84,7 @@ public class ControlPanelPageAdapter extends PagerAdapter {
                             adapter.selectMultiControlViews(selectedViewList);
                             sideAdapter.selectMultiControlViews(selectedSideViewList);
 
-                            ((ControlPanelActivity)mContext).setAddControlsMode(selectedViewList, 0, mContext.getString(R.string.control_panel_view));
+                            ((ControlPanelActivity) mContext).setAddControlsMode(selectedViewList, 0, mContext.getString(R.string.control_panel_view));
                         }
                         break;
 
@@ -102,7 +102,7 @@ public class ControlPanelPageAdapter extends PagerAdapter {
 
                         selectedViewList = new ArrayList<>();
                         selectedSideViewList = new ArrayList<>();
-                        for (int i = 0; i < rows*columns; i++) {
+                        for (int i = 0; i < rows * columns; i++) {
                             if (Rect.intersects(rect, itemRects[i])) {
                                 Log.d("Selected", String.valueOf(i + 1));
                                 selectedViewList.add(i);
@@ -112,7 +112,7 @@ public class ControlPanelPageAdapter extends PagerAdapter {
                             adapter.selectMultiControlViews(selectedViewList);
                             sideAdapter.selectMultiControlViews(selectedSideViewList);
 
-                            ((ControlPanelActivity)mContext).setAddControlsMode(selectedViewList, 0, mContext.getString(R.string.control_panel_view));
+                            ((ControlPanelActivity) mContext).setAddControlsMode(selectedViewList, 0, mContext.getString(R.string.control_panel_view));
                         }
                         break;
 
@@ -123,8 +123,6 @@ public class ControlPanelPageAdapter extends PagerAdapter {
                 return false;
             }
         });
-
-//        ((ControlPanelActivity)mContext).setControlPanelTouchEvent(view);
 
         collection.addView(layout);
         return layout;

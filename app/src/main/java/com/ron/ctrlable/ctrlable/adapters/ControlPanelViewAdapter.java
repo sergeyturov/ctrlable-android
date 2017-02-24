@@ -11,8 +11,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
+import com.github.rongi.rotate_layout.layout.RotateLayout;
 import com.ron.ctrlable.ctrlable.classes.ConfigurationClass;
 import com.ron.ctrlable.ctrlable.R;
 import com.ron.ctrlable.ctrlable.views.ControlPanelView;
@@ -26,6 +26,8 @@ import java.util.Objects;
 
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.controlsObject;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.currentScreenIndex;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.device_rotation;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.isTablet;
 
 public class ControlPanelViewAdapter extends RecyclerView.Adapter<ControlPanelViewAdapter.ViewHolder> {
     private Context context;
@@ -53,7 +55,7 @@ public class ControlPanelViewAdapter extends RecyclerView.Adapter<ControlPanelVi
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
-    public void onBindViewHolder(ControlPanelViewAdapter.ViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(final ControlPanelViewAdapter.ViewHolder viewHolder, final int i) {
 
         device_width = context.getResources().getDisplayMetrics().widthPixels;
         device_height = context.getResources().getDisplayMetrics().heightPixels;
@@ -91,8 +93,11 @@ public class ControlPanelViewAdapter extends RecyclerView.Adapter<ControlPanelVi
         JSONArray screenControls = (JSONArray) ((JSONArray) controlsObject.get(context.getString(R.string.control_panel_view))).get(currentScreenIndex);
         JSONObject itemObj = (JSONObject) screenControls.get(i);
         if (Objects.equals(itemObj.get(context.getString(R.string.view_name)), context.getString(R.string.control_screen))) {
-            View view = new ControlScreenView(context);
+            final View view = new ControlScreenView(context);
             viewHolder.view_control.addView(view);
+            if (!isTablet(context)) {
+                viewHolder.view_control.setAngle(device_rotation);
+            }
             viewHolder.img_eidt.setVisibility(View.INVISIBLE);
         }
     }
@@ -114,14 +119,14 @@ public class ControlPanelViewAdapter extends RecyclerView.Adapter<ControlPanelVi
 
         private ImageView img_eidt;
         private ImageView img_select;
-        private RelativeLayout view_control;
+        private RotateLayout view_control;
 
         ViewHolder(View view) {
             super(view);
 
             img_eidt = (ImageView) view.findViewById(R.id.edit_mark_img);
             img_select = (ImageView) view.findViewById(R.id.select_mark_img);
-            view_control = (RelativeLayout) view.findViewById(R.id.control_view);
+            view_control = (RotateLayout) view.findViewById(R.id.control_view);
 
             view.setOnTouchListener(new View.OnTouchListener() {
                 @Override

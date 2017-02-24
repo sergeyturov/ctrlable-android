@@ -17,7 +17,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.ControlPanelActivity" />
+        <activity
+            android:name=".activities.ControlPanelActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity android:name=".activities.TypeSelectorActivity" />
         <activity android:name=".activities.DeviceSelectorActivity" />
         <activity

@@ -9,6 +9,7 @@
     tools:context="com.ron.ctrlable.ctrlable.activities.ControlPanelActivity">
 
     <RelativeLayout
+        android:id="@+id/buttons_view"
         android:layout_width="match_parent"
         android:layout_height="42dp"
         android:background="#01b4be"

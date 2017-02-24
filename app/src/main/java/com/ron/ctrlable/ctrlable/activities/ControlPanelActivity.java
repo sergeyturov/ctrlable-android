@@ -1,34 +1,28 @@
 package com.ron.ctrlable.ctrlable.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.graphics.Rect;
-import android.icu.text.LocaleDisplayNames;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ron.ctrlable.ctrlable.adapters.ControlPanelPageAdapter;
 import com.ron.ctrlable.ctrlable.classes.ConfigurationClass;
 import com.ron.ctrlable.ctrlable.R;
-import com.ron.ctrlable.ctrlable.interfaces.ChildViewListener;
+import com.ron.ctrlable.ctrlable.classes.ChildViewListener;
 import com.ron.ctrlable.ctrlable.views.ControlPanelView;
 import com.ron.ctrlable.ctrlable.adapters.ControlPanelViewAdapter;
 import com.ron.ctrlable.ctrlable.adapters.ZSideControlViewAdapter;
@@ -47,8 +41,10 @@ import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.SCREEN_FORMAT
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.controlsObject;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.currentScreenIndex;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.current_view;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.device_rotation;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.getStringSharedPreferences;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.initializeControlsJson;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.isTablet;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.itemRects;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.pcm;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.selectedItemsIndex;
@@ -78,6 +74,7 @@ public class ControlPanelActivity extends CustomActivity {
     public ControlPanelViewAdapter adapter;
     public ZSideControlViewAdapter sideAdapter;
     public ControlPanelPageAdapter pageAdapter;
+    public OrientationListener orientationListener;
 
     ControlPanelView zControlView;
     ControlPanelView zSideControlView;
@@ -85,24 +82,15 @@ public class ControlPanelActivity extends CustomActivity {
     ArrayList<Integer> selectedSideViewList;
     static Context context;
 
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
-
     int device_width;
     private int beginPosX = 0;
     private int beginPosY = 0;
     private int endPosX = 0;
     private int endPosY = 0;
     private Rect[] sideItemRects;
-    private int screenIndex = 0; // If 0 sideview, else parent/subscreen control panel.
 
     public int grid_rows;
     public int grid_columns;
-
-//    private Animation toLandAnim, toPortAnim;
-//    private OrientationListener orientationListener;
-
-//    private ControlPanelView.UserInteractionMode pcm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +99,9 @@ public class ControlPanelActivity extends CustomActivity {
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_control_panel);
+
+        orientationListener = new OrientationListener(this);
+        orientationListener.enable();
 
         pcm = ControlPanelView.UserInteractionMode.UserInteractionDisabled;
         currentScreenIndex = 0;
@@ -123,9 +114,6 @@ public class ControlPanelActivity extends CustomActivity {
         setControlPanelPagerAdapter();
 
         Log.d("Tablet Mode:", String.valueOf(ConfigurationClass.isTablet(this)));
-
-//        toLandAnim= AnimationUtils.loadAnimatthis, R.anim.ion(this, R.anim.menubutton_to_landscape);
-//        toPortAnim= AnimationUtils.loadAnimation(menubutton_to_portrait);
     }
 
     @Override
@@ -529,7 +517,7 @@ public class ControlPanelActivity extends CustomActivity {
             rightButton.setVisibility(View.VISIBLE);
             leftButton.setVisibility(View.INVISIBLE);
             upButton.setVisibility(View.INVISIBLE);
-        } else if (currentScreenIndex == allControls.size()-1) {
+        } else if (currentScreenIndex == allControls.size() - 1) {
             rightButton.setVisibility(View.INVISIBLE);
             leftButton.setVisibility(View.VISIBLE);
             upButton.setVisibility(View.VISIBLE);
@@ -575,32 +563,35 @@ public class ControlPanelActivity extends CustomActivity {
         }
     }
 
-//    private class OrientationListener extends OrientationEventListener {
-//        final int ROTATION_O    = 1;
-//        final int ROTATION_90   = 2;
-//        final int ROTATION_180  = 3;
-//        final int ROTATION_270  = 4;
-//
-//        private int rotation = 0;
-//        public OrientationListener(Context context) { super(context); }
-//
-//        @Override public void onOrientationChanged(int orientation) {
-//            if( (orientation < 35 || orientation > 325) && rotation!= ROTATION_O){ // PORTRAIT
-//                rotation = ROTATION_O;
-//
-//            }
-//            else if( orientation > 145 && orientation < 215 && rotation!=ROTATION_180){ // REVERSE PORTRAIT
-//                rotation = ROTATION_180;
-//                menuButton.startAnimation(toPortAnim);
-//            }
-//            else if(orientation > 55 && orientation < 125 && rotation!=ROTATION_270){ // REVERSE LANDSCAPE
-//                rotation = ROTATION_270;
-//                menuButton.startAnimation(toLandAnim);
-//            }
-//            else if(orientation > 235 && orientation < 305 && rotation!=ROTATION_90){ //LANDSCAPE
-//                rotation = ROTATION_90;
-//                menuButton.startAnimation(toLandAnim);
-//            }
-//        }
-//    }
+    private class OrientationListener extends OrientationEventListener {
+
+        final int ROTATION_O = 0;
+        final int ROTATION_90 = 90;
+        final int ROTATION_180 = 180;
+        final int ROTATION_270 = 270;
+
+        OrientationListener(Context context) {
+            super(context);
+        }
+
+        @Override
+        public void onOrientationChanged(int orientation) {
+            if ((orientation < 35 || orientation > 325) && device_rotation != ROTATION_O) { // PORTRAIT
+                device_rotation = ROTATION_O;
+                vp.setAdapter(pageAdapter);
+
+            } else if (orientation > 145 && orientation < 215 && device_rotation != ROTATION_180) { // REVERSE PORTRAIT
+                device_rotation = ROTATION_180;
+                vp.setAdapter(pageAdapter);
+
+            } else if (orientation > 55 && orientation < 125 && device_rotation != ROTATION_270) { // REVERSE LANDSCAPE
+                device_rotation = ROTATION_90;
+                vp.setAdapter(pageAdapter);
+
+            } else if (orientation > 235 && orientation < 305 && device_rotation != ROTATION_90) { //LANDSCAPE
+                device_rotation = ROTATION_270;
+                vp.setAdapter(pageAdapter);
+            }
+        }
+    }
 }

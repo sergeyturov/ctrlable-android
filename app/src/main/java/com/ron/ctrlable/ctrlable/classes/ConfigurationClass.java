@@ -34,6 +34,7 @@ public class ConfigurationClass {
     public static String SCREEN_FORMAT_ARRAY = "SCREEN_ARRAY";
     public static String current_view = "";
     public static ControlPanelView.UserInteractionMode pcm;
+    public static int device_rotation = 0;
 
     public static boolean isTablet(Context context) {
         return (context.getResources().getConfiguration().screenLayout
@@ -53,7 +54,6 @@ public class ConfigurationClass {
         return sharedPreferences.getString(key, "");
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static void initializeControlsJson(Context context) {
 
         current_view = context.getString(R.string.control_panel_view);

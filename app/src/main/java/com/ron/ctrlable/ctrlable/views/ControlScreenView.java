@@ -11,10 +11,9 @@ import android.widget.RelativeLayout;
 
 import com.ron.ctrlable.ctrlable.R;
 import com.ron.ctrlable.ctrlable.activities.ControlPanelActivity;
-import com.ron.ctrlable.ctrlable.interfaces.ChildViewListener;
+import com.ron.ctrlable.ctrlable.classes.ChildViewListener;
 
-import java.util.Arrays;
-
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.device_rotation;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.pcm;
 
 /**
@@ -56,13 +55,14 @@ public class ControlScreenView extends RelativeLayout {
         this.context = context;
         inflate(getContext(), R.layout.item_control_screen, this);
 
-        RelativeLayout mainView = (RelativeLayout) findViewById(R.id.view_control_screen);
+
+        final RelativeLayout mainView = (RelativeLayout) findViewById(R.id.view_control_screen);
         mainView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (pcm == ControlPanelView.UserInteractionMode.UserInteractionDisabled) {
                     Log.d("Touched", String.valueOf(pcm));
-                    if(context instanceof ControlPanelActivity) {
+                    if (context instanceof ControlPanelActivity) {
                         ((ControlPanelActivity) context).goToNextControlPanel();
                     }
                 }

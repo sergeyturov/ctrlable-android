@@ -2,23 +2,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/transparent"
     android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/view_control_screen"
-        android:background="@drawable/shape_control_screen"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/shape_control_screen">
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:text="[control screen]"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
             android:lines="2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:text="[control screen]"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
     </RelativeLayout>
 </RelativeLayout>
