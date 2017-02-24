@@ -88,7 +88,7 @@ public class ZSideControlViewAdapter extends RecyclerView.Adapter<ZSideControlVi
             }
         }
 
-        JSONArray screenControls = (JSONArray) ((JSONArray) controlsObject.get(context.getString(R.string.side_view))).get(currentScreenIndex);
+        JSONArray screenControls = (JSONArray) ((JSONArray) controlsObject.get(context.getString(R.string.side_view))).get(0);
         JSONObject itemObj = (JSONObject) screenControls.get(position);
         if (Objects.equals(itemObj.get(context.getString(R.string.view_name)), context.getString(R.string.control_screen))) {
 //            View view = LayoutInflater.from(context).inflate(R.layout.item_control_screen, null);

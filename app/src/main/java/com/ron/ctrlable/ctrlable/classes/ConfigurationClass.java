@@ -3,7 +3,10 @@ package com.ron.ctrlable.ctrlable.classes;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Rect;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.RequiresApi;
 
 import com.ron.ctrlable.ctrlable.R;
 import com.ron.ctrlable.ctrlable.views.ControlPanelView;
@@ -27,6 +30,7 @@ public class ConfigurationClass {
     public static JSONObject controlsObject = new JSONObject();
     public static ArrayList<Integer> selectedItemsIndex = new ArrayList<>();
     public static int currentScreenIndex = 0;    // If 0 sideview, else parent/subscreen control panel.
+    public static Rect[] itemRects;
     public static String SCREEN_FORMAT_ARRAY = "SCREEN_ARRAY";
     public static String current_view = "";
     public static ControlPanelView.UserInteractionMode pcm;
@@ -49,6 +53,7 @@ public class ConfigurationClass {
         return sharedPreferences.getString(key, "");
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static void initializeControlsJson(Context context) {
 
         current_view = context.getString(R.string.control_panel_view);

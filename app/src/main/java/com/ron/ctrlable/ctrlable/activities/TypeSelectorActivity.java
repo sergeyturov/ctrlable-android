@@ -2,12 +2,9 @@ package com.ron.ctrlable.ctrlable.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -17,15 +14,16 @@ import android.widget.ListView;
 import com.ron.ctrlable.ctrlable.R;
 
 import org.json.simple.JSONArray;
-import org.json.JSONException;
 import org.json.simple.JSONObject;
 
-import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.SCREEN_FORMAT_ARRAY;
+import java.util.Objects;
+
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.columns;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.controlsObject;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.currentScreenIndex;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.current_view;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.rows;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.selectedItemsIndex;
-import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.setStringSharedPreferences;
 
 /**
  * Created by Android Developer on 2/12/2017.
@@ -55,17 +53,29 @@ public class TypeSelectorActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                JSONArray allControls = (JSONArray) controlsObject.get(current_view);
+                JSONArray screenControls = (JSONArray) allControls.get(currentScreenIndex);
+                if (Objects.equals(current_view, getString(R.string.side_view))) {
+                    screenControls = (JSONArray) allControls.get(0);
+                }
+
                 switch (position) {
                     case 0:
-                        JSONArray allControls = (JSONArray) controlsObject.get(current_view);
-                        JSONArray screenControls = (JSONArray) allControls.get(currentScreenIndex);
-
                         for (int i = 0; i < selectedItemsIndex.size(); i++) {
                             JSONObject itemObj = (JSONObject) screenControls.get(selectedItemsIndex.get(i));
                             itemObj.put(getString(R.string.view_name), getString(R.string.control_screen));
                             screenControls.set(selectedItemsIndex.get(i), itemObj);
+
+                            JSONArray controlViewArray = new JSONArray();
+                            for (int j = 0; j < rows * columns; j++) {
+                                controlViewArray.add(new JSONObject());
+                            }
+                            JSONArray controlPanelArray = (JSONArray) controlsObject.get(getString(R.string.control_panel_view));
+                            controlPanelArray.add(controlViewArray);
+                            controlsObject.put(getString(R.string.control_panel_view), controlPanelArray);
                         }
 
+                        allControls = (JSONArray) controlsObject.get(current_view);
                         allControls.set(currentScreenIndex, screenControls);
                         controlsObject.put(current_view, allControls);
 

@@ -2,11 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorGray"
     android:orientation="vertical">
 
     <com.ron.ctrlable.ctrlable.views.ControlPanelView
-        android:id="@+id/control_recycler_view"
+        android:id="@+id/control_recycler_view1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical" />

@@ -2,7 +2,6 @@ package com.ron.ctrlable.ctrlable.adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
@@ -14,14 +13,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.ron.ctrlable.ctrlable.activities.ControlPanelActivity;
 import com.ron.ctrlable.ctrlable.classes.ConfigurationClass;
 import com.ron.ctrlable.ctrlable.R;
 import com.ron.ctrlable.ctrlable.views.ControlPanelView;
 import com.ron.ctrlable.ctrlable.views.ControlScreenView;
 
 import org.json.simple.JSONArray;
-import org.json.JSONException;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
@@ -29,7 +26,6 @@ import java.util.Objects;
 
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.controlsObject;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.currentScreenIndex;
-import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.current_view;
 
 public class ControlPanelViewAdapter extends RecyclerView.Adapter<ControlPanelViewAdapter.ViewHolder> {
     private Context context;
@@ -95,7 +91,6 @@ public class ControlPanelViewAdapter extends RecyclerView.Adapter<ControlPanelVi
         JSONArray screenControls = (JSONArray) ((JSONArray) controlsObject.get(context.getString(R.string.control_panel_view))).get(currentScreenIndex);
         JSONObject itemObj = (JSONObject) screenControls.get(i);
         if (Objects.equals(itemObj.get(context.getString(R.string.view_name)), context.getString(R.string.control_screen))) {
-//            View view = LayoutInflater.from(context).inflate(R.layout.item_control_screen, null);
             View view = new ControlScreenView(context);
             viewHolder.view_control.addView(view);
             viewHolder.img_eidt.setVisibility(View.INVISIBLE);

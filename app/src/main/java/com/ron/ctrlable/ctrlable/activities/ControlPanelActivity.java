@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
+import android.icu.text.LocaleDisplayNames;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +37,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.SCREEN_FORMAT_ARRAY;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.controlsObject;
@@ -42,9 +45,11 @@ import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.currentScreen
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.current_view;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.getStringSharedPreferences;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.initializeControlsJson;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.itemRects;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.pcm;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.selectedItemsIndex;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.setStringSharedPreferences;
+import static com.ron.ctrlable.ctrlable.views.ControlPanelView.UserInteractionMode.UserInteractionLayout;
 
 public class ControlPanelActivity extends Activity {
 
@@ -66,6 +71,9 @@ public class ControlPanelActivity extends Activity {
     public RelativeLayout sideView;
     public ViewPager controlPanelPager;
     public ViewPagerCustomDuration vp;
+    public ControlPanelViewAdapter adapter;
+    public ZSideControlViewAdapter sideAdapter;
+    public ControlPanelPageAdapter pageAdapter;
 
     ControlPanelView zControlView;
     ControlPanelView zSideControlView;
@@ -81,7 +89,6 @@ public class ControlPanelActivity extends Activity {
     private int beginPosY = 0;
     private int endPosX = 0;
     private int endPosY = 0;
-    private Rect[] itemRects;
     private Rect[] sideItemRects;
     private int screenIndex = 0; // If 0 sideview, else parent/subscreen control panel.
 
@@ -99,25 +106,14 @@ public class ControlPanelActivity extends Activity {
         setContentView(R.layout.activity_control_panel);
 
         pcm = ControlPanelView.UserInteractionMode.UserInteractionDisabled;
+        currentScreenIndex = 0;
 
         setPanelControlMode();
         resetGrid();
         setChildViewListener();
 
-        controlPanelPager = (ViewPager) findViewById(R.id.viewpager);
-        controlPanelPager.setAdapter(new ControlPanelPageAdapter(ControlPanelActivity.this));
-        controlPanelPager.setPageTransformer(false, new ViewPager.PageTransformer() {
-            @Override
-            public void transformPage(View page, float position) {
-                if (position == 1) {
-                    page.setAlpha(0.5f);
-                }
-            }
-        });
-
-        vp = (ViewPagerCustomDuration) findViewById(R.id.control_panel_pager);
-        vp.setAdapter(new ControlPanelPageAdapter((ControlPanelActivity.this)));
-        vp.setScrollDurationFactor(2); // make the animation twice as slow
+        // set the view pager for each Control Panels.
+        setControlPanelPagerAdapter();
 
         Log.d("Tablet Mode:", String.valueOf(ConfigurationClass.isTablet(this)));
     }
@@ -126,6 +122,7 @@ public class ControlPanelActivity extends Activity {
     protected void onResume() {
         super.onResume();
         resetGrid();
+        setControlPanelPagerAdapter();
     }
 
     public void setChildViewListener() {
@@ -134,6 +131,33 @@ public class ControlPanelActivity extends Activity {
             @Override
             public void onViewTapped() {
                 Log.d("Tapped", "OK");
+            }
+        });
+    }
+
+    // set the view pager for each Control Panels.
+    public void setControlPanelPagerAdapter() {
+
+        vp = (ViewPagerCustomDuration) findViewById(R.id.control_panel_pager);
+        pageAdapter = new ControlPanelPageAdapter((ControlPanelActivity.this));
+        vp.setAdapter(pageAdapter);
+        vp.setScrollDurationFactor(5);
+        setNavigateButtons();
+
+        vp.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                Log.d("Scrolled ", String.valueOf(position));
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                Log.d("Selected ", String.valueOf(position));
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                Log.d("Scroll state changed ", String.valueOf(state));
             }
         });
     }
@@ -268,81 +292,26 @@ public class ControlPanelActivity extends Activity {
             @Override
             public void run() {
 
-                zControlView = (ControlPanelView) findViewById(R.id.control_recycler_view);
-                zControlView.setLayoutManager(ConfigurationClass.rows);
+                JSONArray allControls = (JSONArray) controlsObject.get(getString(R.string.control_panel_view));
+                if (pcm == UserInteractionLayout) {
+                    leftButton.setVisibility(View.INVISIBLE);
+                    rightButton.setVisibility(View.INVISIBLE);
+                }
 
-                final ControlPanelViewAdapter adapter = new ControlPanelViewAdapter(ControlPanelActivity.this, controlView.getMeasuredHeight(), pcm);
-                zControlView.setAdapter(adapter, getApplicationContext());
+                zControlView = (ControlPanelView) findViewById(R.id.control_recycler_view);
+//                zControlView.setLayoutManager(ConfigurationClass.rows);
+                adapter = new ControlPanelViewAdapter(ControlPanelActivity.this, controlView.getMeasuredHeight(), pcm);
+//                zControlView.setAdapter(adapter, getApplicationContext());
 
                 zSideControlView = (ControlPanelView) findViewById(R.id.side_recycler_view);
                 zSideControlView.setLayoutManager(1);
 
-                final ZSideControlViewAdapter sideAdapter = new ZSideControlViewAdapter(ControlPanelActivity.this, controlView.getMeasuredHeight(), pcm);
+                sideAdapter = new ZSideControlViewAdapter(ControlPanelActivity.this, controlView.getMeasuredHeight(), pcm);
                 zSideControlView.setSideViewAdapter(sideAdapter, getApplicationContext());
 
                 // Get the Rects of the each recyclerview items.
                 setItemRects();
                 setSideItemRects();
-
-                zControlView.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent e) {
-                        switch (e.getAction()) {
-                            case MotionEvent.ACTION_DOWN:
-                                // touch down code
-                                beginPosX = (int) e.getX();
-                                beginPosY = (int) e.getY();
-                                Rect rect = new Rect(beginPosX, beginPosY, beginPosX + 1, beginPosY + 1);
-                                selectedViewList = new ArrayList<>();
-                                selectedSideViewList = new ArrayList<>();
-                                for (int i = 0; i < grid_rows * grid_columns; i++) {
-                                    if (Rect.intersects(rect, itemRects[i])) {
-                                        selectedViewList.add(i);
-                                    }
-                                }
-                                if (selectedViewList.size() > 0 && pcm == ControlPanelView.UserInteractionMode.UserInteractionLayout) {
-                                    adapter.selectMultiControlViews(selectedViewList);
-                                    sideAdapter.selectMultiControlViews(selectedSideViewList);
-
-                                    setAddControlsMode(selectedViewList, 0, getString(R.string.control_panel_view));
-                                }
-                                break;
-
-                            case MotionEvent.ACTION_MOVE:
-                                // touch move code
-                                endPosX = (int) e.getX();
-                                endPosY = (int) e.getY();
-                                Log.d("Touch move position", String.valueOf(endPosX));
-                                Log.d("Touch move position", String.valueOf(endPosY));
-
-                                rect = new Rect(Math.min(beginPosX, endPosX),
-                                        Math.min(beginPosY, endPosY),
-                                        Math.max(beginPosX, endPosX),
-                                        Math.max(beginPosY, endPosY));
-
-                                selectedViewList = new ArrayList<>();
-                                selectedSideViewList = new ArrayList<>();
-                                for (int i = 0; i < grid_rows * grid_columns; i++) {
-                                    if (Rect.intersects(rect, itemRects[i])) {
-                                        Log.d("Selected", String.valueOf(i + 1));
-                                        selectedViewList.add(i);
-                                    }
-                                }
-                                if (selectedViewList.size() > 0 && pcm == ControlPanelView.UserInteractionMode.UserInteractionLayout) {
-                                    adapter.selectMultiControlViews(selectedViewList);
-                                    sideAdapter.selectMultiControlViews(selectedSideViewList);
-
-                                    setAddControlsMode(selectedViewList, 0, getString(R.string.control_panel_view));
-                                }
-                                break;
-
-                            case MotionEvent.ACTION_UP:
-                                // touch up code
-                                break;
-                        }
-                        return false;
-                    }
-                });
 
                 zSideControlView.setOnTouchListener(new View.OnTouchListener() {
                     @Override
@@ -360,7 +329,7 @@ public class ControlPanelActivity extends Activity {
                                         selectedSideViewList.add(i);
                                     }
                                 }
-                                if (selectedSideViewList.size() > 0 && pcm == ControlPanelView.UserInteractionMode.UserInteractionLayout) {
+                                if (selectedSideViewList.size() > 0 && pcm == UserInteractionLayout) {
                                     adapter.selectMultiControlViews(selectedViewList);
                                     sideAdapter.selectMultiControlViews(selectedSideViewList);
 
@@ -389,7 +358,7 @@ public class ControlPanelActivity extends Activity {
                                     }
                                 }
 
-                                if (selectedSideViewList.size() > 0 && pcm == ControlPanelView.UserInteractionMode.UserInteractionLayout) {
+                                if (selectedSideViewList.size() > 0 && pcm == UserInteractionLayout) {
                                     adapter.selectMultiControlViews(selectedViewList);
                                     sideAdapter.selectMultiControlViews(selectedSideViewList);
 
@@ -410,33 +379,20 @@ public class ControlPanelActivity extends Activity {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void goToNextControlPanel() {
-        vp.setScrollDurationFactor(5);
-        vp.setCurrentItem(2);
-//        controlPanelPager.setCurrentItem(2, true);
-
-//        ControlPanelView controlPanelView = (ControlPanelView) findViewById(R.id.control_recycler_view);
-//        RelativeLayout customLayout = new RelativeLayout(this);
-//        if (controlPanelView.getParent() != null) {
-//            ((ViewGroup) controlPanelView.getParent()).removeView(controlPanelView);
-//        }
-//        customLayout.addView(controlPanelView);
-//
-//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        customLayout.setLayoutParams(params);
-//        customLayout.setBackgroundColor(getColor(R.color.colorAccent));
-//        controlView.addView(customLayout);
-//
-////        zControlView.setLayoutManager(ConfigurationClass.rows);
-////
-////        final ControlPanelViewAdapter adapter = new ControlPanelViewAdapter(ControlPanelActivity.this, controlView.getMeasuredHeight(), pcm);
-////        zControlView.setAdapter(adapter, getApplicationContext());
+        JSONArray allControls = (JSONArray) controlsObject.get(getString(R.string.control_panel_view));
+        if (currentScreenIndex < allControls.size() - 1) {
+            currentScreenIndex += 1;
+        }
+        vp.setAdapter(pageAdapter);
+        vp.setCurrentItem(currentScreenIndex);
+        setNavigateButtons();
     }
 
     // set the Add/Edit button from the selected controls.
     public void setAddControlsMode(ArrayList<Integer> selectedViews, int screenIndex, String currentViewMode) {
 
         selectedItemsIndex = selectedViews;
-        currentScreenIndex = screenIndex;
+//        currentScreenIndex = screenIndex;
         current_view = currentViewMode;
 
         JSONArray allControls = (JSONArray) controlsObject.get(current_view);
@@ -469,9 +425,11 @@ public class ControlPanelActivity extends Activity {
     public void onSetupControl(View view) {
 
         if (pcm == ControlPanelView.UserInteractionMode.UserInteractionDisabled) {
-            pcm = ControlPanelView.UserInteractionMode.UserInteractionLayout;
+            pcm = UserInteractionLayout;
             setPanelControlMode();
             resetGrid();
+            setControlPanelPagerAdapter();
+
         } else {
             Intent intent = new Intent(ControlPanelActivity.this, TypeSelectorActivity.class);
             startActivity(intent);
@@ -513,6 +471,7 @@ public class ControlPanelActivity extends Activity {
         pcm = ControlPanelView.UserInteractionMode.UserInteractionDisabled;
         setPanelControlMode();
         resetGrid();
+        setControlPanelPagerAdapter();
     }
 
     public void onSetupDone(View view) {
@@ -522,13 +481,54 @@ public class ControlPanelActivity extends Activity {
         pcm = ControlPanelView.UserInteractionMode.UserInteractionDisabled;
         setPanelControlMode();
         resetGrid();
+        setControlPanelPagerAdapter();
     }
 
     public void onReconnect(View view) {
         networkIdicatorButton.setBackgroundResource(R.drawable.wifi);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void onNavigate(View view) {
+        JSONArray allControls = (JSONArray) controlsObject.get(getString(R.string.control_panel_view));
+
+        if (Objects.equals(view.getTag().toString(), "1")) {            // Up button
+            currentScreenIndex = 0;
+
+        } else if (Objects.equals(view.getTag().toString(), "2")) {     // Left button
+            if (currentScreenIndex > 0) {
+                currentScreenIndex -= 1;
+            }
+
+        } else if (Objects.equals(view.getTag().toString(), "3")) {     // Right button
+            if (currentScreenIndex < allControls.size() - 1) {
+                currentScreenIndex += 1;
+            }
+        }
+
+        vp.setAdapter(pageAdapter);
+        vp.setCurrentItem(currentScreenIndex);
+        setNavigateButtons();
+    }
+
+    public void setNavigateButtons() {
+
+        JSONArray allControls = (JSONArray) controlsObject.get(getString(R.string.control_panel_view));
+
+        if (currentScreenIndex == 0) {
+            rightButton.setVisibility(View.VISIBLE);
+            leftButton.setVisibility(View.INVISIBLE);
+            upButton.setVisibility(View.INVISIBLE);
+        } else if (currentScreenIndex == allControls.size()-1) {
+            rightButton.setVisibility(View.INVISIBLE);
+            leftButton.setVisibility(View.VISIBLE);
+            upButton.setVisibility(View.VISIBLE);
+        } else {
+            rightButton.setVisibility(View.VISIBLE);
+            leftButton.setVisibility(View.VISIBLE);
+            upButton.setVisibility(View.VISIBLE);
+        }
+
     }
 
     // Side-by-side button clicked
