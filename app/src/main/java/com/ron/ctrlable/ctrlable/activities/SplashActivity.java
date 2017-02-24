@@ -13,7 +13,7 @@ import com.ron.ctrlable.ctrlable.R;
  * Created by Android Developer on 2/13/2017.
  */
 
-public class SplashActivity extends Activity {
+public class SplashActivity extends CustomActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

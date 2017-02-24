@@ -23,5 +23,6 @@
         <activity
             android:name=".activities.SettingsActivity"
             android:theme="@android:style/Theme.Translucent" />
+        <activity android:name=".activities.CustomActivity" />
     </application>
 </manifest>

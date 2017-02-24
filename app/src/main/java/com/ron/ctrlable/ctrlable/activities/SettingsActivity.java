@@ -16,7 +16,7 @@ import com.ron.ctrlable.ctrlable.adapters.SettingsAdapter;
  * Created by Android Developer on 2/13/2017.
  */
 
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends CustomActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

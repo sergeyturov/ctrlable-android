@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Rect;
 import android.icu.text.LocaleDisplayNames;
 import android.os.Build;
@@ -14,9 +15,12 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -51,7 +55,7 @@ import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.selectedItems
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.setStringSharedPreferences;
 import static com.ron.ctrlable.ctrlable.views.ControlPanelView.UserInteractionMode.UserInteractionLayout;
 
-public class ControlPanelActivity extends Activity {
+public class ControlPanelActivity extends CustomActivity {
 
     public Button setupControlButton;
     public Button gridButton;
@@ -95,6 +99,9 @@ public class ControlPanelActivity extends Activity {
     public int grid_rows;
     public int grid_columns;
 
+//    private Animation toLandAnim, toPortAnim;
+//    private OrientationListener orientationListener;
+
 //    private ControlPanelView.UserInteractionMode pcm;
 
     @Override
@@ -116,6 +123,9 @@ public class ControlPanelActivity extends Activity {
         setControlPanelPagerAdapter();
 
         Log.d("Tablet Mode:", String.valueOf(ConfigurationClass.isTablet(this)));
+
+//        toLandAnim= AnimationUtils.loadAnimatthis, R.anim.ion(this, R.anim.menubutton_to_landscape);
+//        toPortAnim= AnimationUtils.loadAnimation(menubutton_to_portrait);
     }
 
     @Override
@@ -564,4 +574,33 @@ public class ControlPanelActivity extends Activity {
                     (i + 1) * zControlView.getHeight() / 4);
         }
     }
+
+//    private class OrientationListener extends OrientationEventListener {
+//        final int ROTATION_O    = 1;
+//        final int ROTATION_90   = 2;
+//        final int ROTATION_180  = 3;
+//        final int ROTATION_270  = 4;
+//
+//        private int rotation = 0;
+//        public OrientationListener(Context context) { super(context); }
+//
+//        @Override public void onOrientationChanged(int orientation) {
+//            if( (orientation < 35 || orientation > 325) && rotation!= ROTATION_O){ // PORTRAIT
+//                rotation = ROTATION_O;
+//
+//            }
+//            else if( orientation > 145 && orientation < 215 && rotation!=ROTATION_180){ // REVERSE PORTRAIT
+//                rotation = ROTATION_180;
+//                menuButton.startAnimation(toPortAnim);
+//            }
+//            else if(orientation > 55 && orientation < 125 && rotation!=ROTATION_270){ // REVERSE LANDSCAPE
+//                rotation = ROTATION_270;
+//                menuButton.startAnimation(toLandAnim);
+//            }
+//            else if(orientation > 235 && orientation < 305 && rotation!=ROTATION_90){ //LANDSCAPE
+//                rotation = ROTATION_90;
+//                menuButton.startAnimation(toLandAnim);
+//            }
+//        }
+//    }
 }

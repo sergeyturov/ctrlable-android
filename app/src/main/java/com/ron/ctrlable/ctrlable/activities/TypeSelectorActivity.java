@@ -29,7 +29,7 @@ import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.selectedItems
  * Created by Android Developer on 2/12/2017.
  */
 
-public class TypeSelectorActivity extends Activity {
+public class TypeSelectorActivity extends CustomActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

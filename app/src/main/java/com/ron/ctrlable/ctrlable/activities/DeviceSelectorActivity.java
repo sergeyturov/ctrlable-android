@@ -15,7 +15,7 @@ import com.ron.ctrlable.ctrlable.R;
  * Created by Android Developer on 2/14/2017.
  */
 
-public class DeviceSelectorActivity extends Activity{
+public class DeviceSelectorActivity extends CustomActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
