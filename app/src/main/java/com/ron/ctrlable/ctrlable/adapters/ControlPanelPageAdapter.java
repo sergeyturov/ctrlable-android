@@ -1,6 +1,7 @@
 package com.ron.ctrlable.ctrlable.adapters;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
@@ -8,7 +9,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.RotateAnimation;
 
+import com.github.rongi.rotate_layout.layout.RotateLayout;
 import com.ron.ctrlable.ctrlable.R;
 import com.ron.ctrlable.ctrlable.activities.ControlPanelActivity;
 import com.ron.ctrlable.ctrlable.classes.ConfigurationClass;
@@ -22,6 +25,7 @@ import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.columns;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.controlsObject;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.currentScreenIndex;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.current_view;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.isTablet;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.itemRects;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.pcm;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.rows;

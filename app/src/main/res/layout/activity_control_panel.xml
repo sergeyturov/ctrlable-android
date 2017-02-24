@@ -9,7 +9,6 @@
     tools:context="com.ron.ctrlable.ctrlable.activities.ControlPanelActivity">
 
     <RelativeLayout
-        android:id="@+id/buttons_view"
         android:layout_width="match_parent"
         android:layout_height="42dp"
         android:background="#01b4be"
@@ -165,10 +164,16 @@
             android:layout_alignParentTop="true"
             android:scrollbars="vertical" />
 
-        <com.ron.ctrlable.ctrlable.views.ViewPagerCustomDuration
-            android:id="@+id/control_panel_pager"
+        <com.github.rongi.rotate_layout.layout.RotateLayout
+            android:id="@+id/rotate_control_panel"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <com.ron.ctrlable.ctrlable.views.ViewPagerCustomDuration
+                android:id="@+id/control_panel_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </com.github.rongi.rotate_layout.layout.RotateLayout>
 
         <RelativeLayout
             android:id="@+id/side_view"

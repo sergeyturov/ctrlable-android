@@ -2,6 +2,7 @@ package com.ron.ctrlable.ctrlable.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.github.rongi.rotate_layout.layout.RotateLayout;
 import com.ron.ctrlable.ctrlable.adapters.ControlPanelPageAdapter;
 import com.ron.ctrlable.ctrlable.classes.ConfigurationClass;
 import com.ron.ctrlable.ctrlable.R;
@@ -563,6 +565,16 @@ public class ControlPanelActivity extends CustomActivity {
         }
     }
 
+    private void setControlPanelRotation() {
+        RotateLayout view_rotate = (RotateLayout) findViewById(R.id.rotate_control_panel);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            view_rotate.setAngle(0);
+        } else {
+            view_rotate.setAngle(90);
+        }
+    }
+
+
     private class OrientationListener extends OrientationEventListener {
 
         final int ROTATION_O = 0;
@@ -578,19 +590,26 @@ public class ControlPanelActivity extends CustomActivity {
         public void onOrientationChanged(int orientation) {
             if ((orientation < 35 || orientation > 325) && device_rotation != ROTATION_O) { // PORTRAIT
                 device_rotation = ROTATION_O;
+                resetGrid();
                 vp.setAdapter(pageAdapter);
+                setControlPanelRotation();
 
             } else if (orientation > 145 && orientation < 215 && device_rotation != ROTATION_180) { // REVERSE PORTRAIT
                 device_rotation = ROTATION_180;
+                resetGrid();
                 vp.setAdapter(pageAdapter);
+                setControlPanelRotation();
 
             } else if (orientation > 55 && orientation < 125 && device_rotation != ROTATION_270) { // REVERSE LANDSCAPE
                 device_rotation = ROTATION_90;
+                resetGrid();
                 vp.setAdapter(pageAdapter);
 
             } else if (orientation > 235 && orientation < 305 && device_rotation != ROTATION_90) { //LANDSCAPE
                 device_rotation = ROTATION_270;
+                resetGrid();
                 vp.setAdapter(pageAdapter);
+                setControlPanelRotation();
             }
         }
     }

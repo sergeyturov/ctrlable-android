@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.github.rongi.rotate_layout.layout.RotateLayout;
 import com.ron.ctrlable.ctrlable.R;
 import com.ron.ctrlable.ctrlable.classes.ConfigurationClass;
 import com.ron.ctrlable.ctrlable.views.ControlPanelView;
@@ -115,14 +116,14 @@ public class ZSideControlViewAdapter extends RecyclerView.Adapter<ZSideControlVi
 
         private ImageView img_eidt;
         private ImageView img_select;
-        private RelativeLayout view_control;
+        private RotateLayout view_control;
 
         ViewHolder(View view) {
             super(view);
 
             img_eidt = (ImageView) view.findViewById(R.id.edit_mark_img);
             img_select = (ImageView) view.findViewById(R.id.select_mark_img);
-            view_control = (RelativeLayout) view.findViewById(R.id.control_view);
+            view_control = (RotateLayout) view.findViewById(R.id.control_view);
 
             view.setOnTouchListener(new View.OnTouchListener() {
                 @Override

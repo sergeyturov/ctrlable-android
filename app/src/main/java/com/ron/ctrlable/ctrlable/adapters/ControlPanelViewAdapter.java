@@ -95,9 +95,8 @@ public class ControlPanelViewAdapter extends RecyclerView.Adapter<ControlPanelVi
         if (Objects.equals(itemObj.get(context.getString(R.string.view_name)), context.getString(R.string.control_screen))) {
             final View view = new ControlScreenView(context);
             viewHolder.view_control.addView(view);
-            if (!isTablet(context)) {
-                viewHolder.view_control.setAngle(device_rotation);
-            }
+            viewHolder.view_control.setAngle(device_rotation);
+            Log.d("Device rotation: ", String.valueOf(device_rotation));
             viewHolder.img_eidt.setVisibility(View.INVISIBLE);
         }
     }
