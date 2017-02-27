@@ -81,7 +81,6 @@ public class ControlPanelActivity extends CustomActivity {
 
     ControlPanelView zControlView;
     ControlPanelView zSideControlView;
-    ArrayList<Integer> selectedViewList;
     ArrayList<Integer> selectedSideViewList;
     static Context context;
 
@@ -157,6 +156,10 @@ public class ControlPanelActivity extends CustomActivity {
     // set the view pager for each Control Panels.
     public void setControlPanelPagerAdapter() {
 
+        zControlView = (ControlPanelView) findViewById(R.id.control_recycler_view);
+        zControlView.setLayoutManager(ConfigurationClass.rows);
+        adapter = new ControlPanelViewAdapter(ControlPanelActivity.this, controlView.getMeasuredHeight(), pcm);
+
         vp = (ViewPagerCustomDuration) findViewById(R.id.control_panel_pager);
         pageAdapter = new ControlPanelPageAdapter((ControlPanelActivity.this));
         vp.setAdapter(pageAdapter);
@@ -179,6 +182,15 @@ public class ControlPanelActivity extends CustomActivity {
                 Log.d("Scroll state changed ", String.valueOf(state));
             }
         });
+    }
+
+    // set the recycler adapter for the side-by-side view.
+    public void setSideViewAdapter() {
+        zSideControlView = (ControlPanelView) findViewById(R.id.side_recycler_view);
+        zSideControlView.setLayoutManager(1);
+
+        sideAdapter = new ZSideControlViewAdapter(ControlPanelActivity.this, controlView.getMeasuredHeight(), pcm);
+        zSideControlView.setSideViewAdapter(sideAdapter, getApplicationContext());
     }
 
     public void setPanelControlMode() {
@@ -317,16 +329,7 @@ public class ControlPanelActivity extends CustomActivity {
                     rightButton.setVisibility(View.INVISIBLE);
                 }
 
-                zControlView = (ControlPanelView) findViewById(R.id.control_recycler_view);
-//                zControlView.setLayoutManager(ConfigurationClass.rows);
-                adapter = new ControlPanelViewAdapter(ControlPanelActivity.this, controlView.getMeasuredHeight(), pcm);
-//                zControlView.setAdapter(adapter, getApplicationContext());
-
-                zSideControlView = (ControlPanelView) findViewById(R.id.side_recycler_view);
-                zSideControlView.setLayoutManager(1);
-
-                sideAdapter = new ZSideControlViewAdapter(ControlPanelActivity.this, controlView.getMeasuredHeight(), pcm);
-                zSideControlView.setSideViewAdapter(sideAdapter, getApplicationContext());
+                setSideViewAdapter();
 
                 // Get the Rects of the each recyclerview items.
                 setItemRects();
@@ -341,7 +344,6 @@ public class ControlPanelActivity extends CustomActivity {
                                 beginPosX = (int) event.getX();
                                 beginPosY = (int) event.getY();
                                 Rect rect = new Rect(beginPosX, beginPosY, beginPosX + 1, beginPosY + 1);
-                                selectedViewList = new ArrayList<>();
                                 selectedSideViewList = new ArrayList<>();
                                 for (int i = 0; i < 4; i++) {
                                     if (Rect.intersects(rect, sideItemRects[i])) {
@@ -349,7 +351,7 @@ public class ControlPanelActivity extends CustomActivity {
                                     }
                                 }
                                 if (selectedSideViewList.size() > 0 && pcm == UserInteractionLayout) {
-                                    adapter.selectMultiControlViews(selectedViewList);
+                                    setControlPanelPagerAdapter();
                                     sideAdapter.selectMultiControlViews(selectedSideViewList);
 
                                     setAddControlsMode(selectedSideViewList, 0, getString(R.string.side_view));
@@ -368,7 +370,6 @@ public class ControlPanelActivity extends CustomActivity {
                                         Math.max(beginPosX, endPosX),
                                         Math.max(beginPosY, endPosY));
 
-                                selectedViewList = new ArrayList<>();
                                 selectedSideViewList = new ArrayList<>();
                                 for (int i = 0; i < 4; i++) {
                                     if (Rect.intersects(rect, sideItemRects[i])) {
@@ -378,7 +379,7 @@ public class ControlPanelActivity extends CustomActivity {
                                 }
 
                                 if (selectedSideViewList.size() > 0 && pcm == UserInteractionLayout) {
-                                    adapter.selectMultiControlViews(selectedViewList);
+                                    setControlPanelPagerAdapter();
                                     sideAdapter.selectMultiControlViews(selectedSideViewList);
 
                                     setAddControlsMode(selectedSideViewList, 0, getString(R.string.side_view));

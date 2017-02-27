@@ -40,8 +40,7 @@ public class ControlPanelPageAdapter extends PagerAdapter {
     private int beginPosY = 0;
     private int endPosX = 0;
     private int endPosY = 0;
-    ArrayList<Integer> selectedViewList;
-    ArrayList<Integer> selectedSideViewList;
+    private ArrayList<Integer> selectedViewList;
     private Context mContext;
     private JSONArray screenControls = new JSONArray();
     private JSONArray allControls = new JSONArray();
@@ -78,7 +77,6 @@ public class ControlPanelPageAdapter extends PagerAdapter {
                         beginPosY = (int) e.getY();
                         Rect rect = new Rect(beginPosX, beginPosY, beginPosX + 1, beginPosY + 1);
                         selectedViewList = new ArrayList<>();
-                        selectedSideViewList = new ArrayList<>();
                         for (int i = 0; i < rows * columns; i++) {
                             if (Rect.intersects(rect, itemRects[i])) {
                                 selectedViewList.add(i);
@@ -86,8 +84,7 @@ public class ControlPanelPageAdapter extends PagerAdapter {
                         }
                         if (selectedViewList.size() > 0 && pcm == ControlPanelView.UserInteractionMode.UserInteractionLayout) {
                             adapter.selectMultiControlViews(selectedViewList);
-                            sideAdapter.selectMultiControlViews(selectedSideViewList);
-
+                            ((ControlPanelActivity) mContext).setSideViewAdapter();
                             ((ControlPanelActivity) mContext).setAddControlsMode(selectedViewList, 0, mContext.getString(R.string.control_panel_view));
                         }
                         break;
@@ -105,7 +102,6 @@ public class ControlPanelPageAdapter extends PagerAdapter {
                                 Math.max(beginPosY, endPosY));
 
                         selectedViewList = new ArrayList<>();
-                        selectedSideViewList = new ArrayList<>();
                         for (int i = 0; i < rows * columns; i++) {
                             if (Rect.intersects(rect, itemRects[i])) {
                                 Log.d("Selected", String.valueOf(i + 1));
@@ -114,8 +110,7 @@ public class ControlPanelPageAdapter extends PagerAdapter {
                         }
                         if (selectedViewList.size() > 0 && pcm == ControlPanelView.UserInteractionMode.UserInteractionLayout) {
                             adapter.selectMultiControlViews(selectedViewList);
-                            sideAdapter.selectMultiControlViews(selectedSideViewList);
-
+                            ((ControlPanelActivity) mContext).setSideViewAdapter();
                             ((ControlPanelActivity) mContext).setAddControlsMode(selectedViewList, 0, mContext.getString(R.string.control_panel_view));
                         }
                         break;
@@ -128,6 +123,9 @@ public class ControlPanelPageAdapter extends PagerAdapter {
             }
         });
 
+        if (layout.getParent() != null) {
+            ((ViewGroup)layout.getParent()).removeAllViews();
+        }
         collection.addView(layout);
         return layout;
     }

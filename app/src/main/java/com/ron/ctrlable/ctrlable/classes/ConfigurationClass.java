@@ -35,6 +35,8 @@ public class ConfigurationClass {
     public static String current_view = "";
     public static ControlPanelView.UserInteractionMode pcm;
     public static int device_rotation = 0;
+//    public static ArrayList<Integer> selectedViewList = new ArrayList<>();
+//    public static ArrayList<Integer> selectedSideViewList = new ArrayList<>();
 
     public static boolean sliding_home_panel = true;
 

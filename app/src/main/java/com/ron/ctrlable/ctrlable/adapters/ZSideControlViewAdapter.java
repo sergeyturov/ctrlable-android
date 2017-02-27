@@ -96,6 +96,9 @@ public class ZSideControlViewAdapter extends RecyclerView.Adapter<ZSideControlVi
         if (Objects.equals(itemObj.get(context.getString(R.string.view_name)), context.getString(R.string.control_screen))) {
 //            View view = LayoutInflater.from(context).inflate(R.layout.item_control_screen, null);
             View view = new ControlScreenView(context);
+            if (view.getParent() != null) {
+                ((ViewGroup)view.getParent()).removeAllViews();
+            }
             viewHolder.view_control.addView(view);
             if (device_rotation == 0) {
                 viewHolder.view_control.setAngle(90);
@@ -114,7 +117,8 @@ public class ZSideControlViewAdapter extends RecyclerView.Adapter<ZSideControlVi
     public void selectMultiControlViews(ArrayList<Integer> selectedList) {
         if (userInteractionMode == ControlPanelView.UserInteractionMode.UserInteractionLayout) {
             singleSelPos = -1;
-            multiSelPos = selectedList;
+            multiSelPos.clear();
+            multiSelPos.addAll(selectedList);
             notifyDataSetChanged();
         }
     }
@@ -131,31 +135,6 @@ public class ZSideControlViewAdapter extends RecyclerView.Adapter<ZSideControlVi
             img_eidt = (ImageView) view.findViewById(R.id.edit_mark_img);
             img_select = (ImageView) view.findViewById(R.id.select_mark_img);
             view_control = (RotateLayout) view.findViewById(R.id.control_view);
-
-            view.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent e) {
-                    switch (e.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            // touch down code
-                            Log.d("Position", String.valueOf(v.getTop()));
-                            Log.d("Position", String.valueOf(v.getLeft()));
-                            Log.d("Position", String.valueOf(v.getRight()));
-                            Log.d("Position", String.valueOf(v.getBottom()));
-                            break;
-
-                        case MotionEvent.ACTION_MOVE:
-                            // touch move code
-                            break;
-
-                        case MotionEvent.ACTION_UP:
-                            // touch up code
-                            break;
-                    }
-
-                    return false;
-                }
-            });
         }
     }
 }
