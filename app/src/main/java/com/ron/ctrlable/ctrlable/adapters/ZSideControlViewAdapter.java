@@ -57,16 +57,21 @@ public class ZSideControlViewAdapter extends RecyclerView.Adapter<ZSideControlVi
         device_width = context.getResources().getDisplayMetrics().widthPixels;
         device_height = context.getResources().getDisplayMetrics().heightPixels;
 
-        viewHolder.view_control.getLayoutParams().width = device_width/4;
-        viewHolder.view_control.getLayoutParams().height = controlview_height/4;
+        int cell_height = controlview_height / 4;
+        if (device_rotation == 0 || device_rotation == 180) {
+            cell_height = device_width / 4;
+        }
+
+        viewHolder.view_control.getLayoutParams().width = device_width / 4;
+        viewHolder.view_control.getLayoutParams().height = cell_height;
 
         viewHolder.img_eidt.setBackgroundResource(R.drawable.control_edit_mark);
         viewHolder.img_eidt.getLayoutParams().width = device_width / 4;
-        viewHolder.img_eidt.getLayoutParams().height = controlview_height / 4;
+        viewHolder.img_eidt.getLayoutParams().height = cell_height;
 
         viewHolder.img_select.setBackgroundResource(R.drawable.control_select_mark);
         viewHolder.img_select.getLayoutParams().width = device_width / 4;
-        viewHolder.img_select.getLayoutParams().height = controlview_height / 4;
+        viewHolder.img_select.getLayoutParams().height = cell_height;
 
         if (userInteractionMode == ControlPanelView.UserInteractionMode.UserInteractionDisabled) {
             viewHolder.img_eidt.setVisibility(View.INVISIBLE);
@@ -93,7 +98,7 @@ public class ZSideControlViewAdapter extends RecyclerView.Adapter<ZSideControlVi
             View view = new ControlScreenView(context);
             viewHolder.view_control.addView(view);
             if (device_rotation == 0) {
-                viewHolder.view_control.setAngle(270);
+                viewHolder.view_control.setAngle(90);
             } else {
                 viewHolder.view_control.setAngle(0);
             }

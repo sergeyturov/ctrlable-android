@@ -19,7 +19,7 @@
         </activity>
         <activity
             android:name=".activities.ControlPanelActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
+            android:configChanges="orientation|screenSize" />
         <activity android:name=".activities.TypeSelectorActivity" />
         <activity android:name=".activities.DeviceSelectorActivity" />
         <activity
