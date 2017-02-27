@@ -36,6 +36,8 @@ public class ConfigurationClass {
     public static ControlPanelView.UserInteractionMode pcm;
     public static int device_rotation = 0;
 
+    public static boolean sliding_home_panel = true;
+
     public static boolean isTablet(Context context) {
         return (context.getResources().getConfiguration().screenLayout
                 & Configuration.SCREENLAYOUT_SIZE_MASK)
@@ -59,7 +61,7 @@ public class ConfigurationClass {
         current_view = context.getString(R.string.control_panel_view);
         String json = getStringSharedPreferences(context, SCREEN_FORMAT_ARRAY);
 
-        if (Objects.equals(json, "")) {
+        if (json.equals("")) {
 
             JSONObject jsonObject = new JSONObject();
             JSONArray sideArray = new JSONArray();

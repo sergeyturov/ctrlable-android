@@ -28,6 +28,7 @@ import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.controlsObjec
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.currentScreenIndex;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.device_rotation;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.isTablet;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.sliding_home_panel;
 
 public class ControlPanelViewAdapter extends RecyclerView.Adapter<ControlPanelViewAdapter.ViewHolder> {
     private Context context;
@@ -95,7 +96,9 @@ public class ControlPanelViewAdapter extends RecyclerView.Adapter<ControlPanelVi
         if (Objects.equals(itemObj.get(context.getString(R.string.view_name)), context.getString(R.string.control_screen))) {
             final View view = new ControlScreenView(context);
             viewHolder.view_control.addView(view);
-            viewHolder.view_control.setAngle(device_rotation);
+            if (!isTablet(context) || sliding_home_panel) {
+                viewHolder.view_control.setAngle(device_rotation);
+            }
             Log.d("Device rotation: ", String.valueOf(device_rotation));
             viewHolder.img_eidt.setVisibility(View.INVISIBLE);
         }

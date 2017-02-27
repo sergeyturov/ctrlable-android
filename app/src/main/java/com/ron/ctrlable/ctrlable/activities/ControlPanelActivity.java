@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -51,6 +51,7 @@ import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.itemRects;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.pcm;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.selectedItemsIndex;
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.setStringSharedPreferences;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.sliding_home_panel;
 import static com.ron.ctrlable.ctrlable.views.ControlPanelView.UserInteractionMode.UserInteractionLayout;
 
 public class ControlPanelActivity extends CustomActivity {
@@ -104,6 +105,12 @@ public class ControlPanelActivity extends CustomActivity {
 
         orientationListener = new OrientationListener(this);
         orientationListener.enable();
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            setControlPanelRotation(90);
+        } else {
+            setControlPanelRotation(0);
+        }
 
         pcm = ControlPanelView.UserInteractionMode.UserInteractionDisabled;
         currentScreenIndex = 0;
@@ -565,12 +572,46 @@ public class ControlPanelActivity extends CustomActivity {
         }
     }
 
-    private void setControlPanelRotation() {
-        RotateLayout view_rotate = (RotateLayout) findViewById(R.id.rotate_control_panel);
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            view_rotate.setAngle(0);
-        } else {
-            view_rotate.setAngle(90);
+    private void setControlPanelRotation(int angle) {
+
+        if (isTablet(this)) {
+            RotateLayout view_rotate = (RotateLayout) findViewById(R.id.rotate_control_panel);
+
+            /////////////////////////////////////
+            if (sliding_home_panel) {
+                view_rotate.setAngle(angle);
+                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    view_rotate.setAngle(0);
+                } else {
+                    view_rotate.setAngle(90);
+                }
+
+            } else {
+                RelativeLayout.LayoutParams params_side_button = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+                ImageView img_side_button = (ImageView) findViewById(R.id.img_side_view);
+                img_side_button.getLayoutParams().width = 0;
+
+                ///
+                RelativeLayout.LayoutParams params_side_view = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                RotateLayout rotate_side_layout = (RotateLayout) findViewById(R.id.rotate_side_view);
+
+                if (angle == 0) {
+
+                    rotate_side_layout.setLayoutParams(params_side_view);
+                    rotate_side_layout.setAngle(90);
+
+                    params_side_button.addRule(RelativeLayout.BELOW, R.id.rotate_side_view);
+                    view_rotate.setLayoutParams(params_side_button);
+                } else {
+                    params_side_view = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    rotate_side_layout.setLayoutParams(params_side_view);
+                    rotate_side_layout.setAngle(0);
+
+                    params_side_button.addRule(RelativeLayout.RIGHT_OF, R.id.rotate_side_view);
+                    view_rotate.setLayoutParams(params_side_button);
+                }
+            }
         }
     }
 
@@ -590,26 +631,29 @@ public class ControlPanelActivity extends CustomActivity {
         public void onOrientationChanged(int orientation) {
             if ((orientation < 35 || orientation > 325) && device_rotation != ROTATION_O) { // PORTRAIT
                 device_rotation = ROTATION_O;
+                setControlPanelRotation(0);
                 resetGrid();
                 vp.setAdapter(pageAdapter);
-                setControlPanelRotation();
 
             } else if (orientation > 145 && orientation < 215 && device_rotation != ROTATION_180) { // REVERSE PORTRAIT
                 device_rotation = ROTATION_180;
+                setControlPanelRotation(0);
                 resetGrid();
                 vp.setAdapter(pageAdapter);
-                setControlPanelRotation();
 
             } else if (orientation > 55 && orientation < 125 && device_rotation != ROTATION_270) { // REVERSE LANDSCAPE
                 device_rotation = ROTATION_90;
+                setControlPanelRotation(90);
                 resetGrid();
-                vp.setAdapter(pageAdapter);
+                setControlPanelPagerAdapter();
+//                vp.setAdapter(pageAdapter);
 
             } else if (orientation > 235 && orientation < 305 && device_rotation != ROTATION_90) { //LANDSCAPE
                 device_rotation = ROTATION_270;
+                setControlPanelRotation(90);
                 resetGrid();
-                vp.setAdapter(pageAdapter);
-                setControlPanelRotation();
+                setControlPanelPagerAdapter();
+//                vp.setAdapter(pageAdapter);
             }
         }
     }

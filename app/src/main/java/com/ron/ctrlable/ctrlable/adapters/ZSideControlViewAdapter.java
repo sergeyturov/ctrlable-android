@@ -10,11 +10,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.github.rongi.rotate_layout.layout.RotateLayout;
 import com.ron.ctrlable.ctrlable.R;
-import com.ron.ctrlable.ctrlable.classes.ConfigurationClass;
 import com.ron.ctrlable.ctrlable.views.ControlPanelView;
 import com.ron.ctrlable.ctrlable.views.ControlScreenView;
 
@@ -25,8 +23,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.controlsObject;
-import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.currentScreenIndex;
-import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.current_view;
+import static com.ron.ctrlable.ctrlable.classes.ConfigurationClass.device_rotation;
 
 /**
  * Created by Android Developer on 2/17/2017.
@@ -95,6 +92,11 @@ public class ZSideControlViewAdapter extends RecyclerView.Adapter<ZSideControlVi
 //            View view = LayoutInflater.from(context).inflate(R.layout.item_control_screen, null);
             View view = new ControlScreenView(context);
             viewHolder.view_control.addView(view);
+            if (device_rotation == 0) {
+                viewHolder.view_control.setAngle(270);
+            } else {
+                viewHolder.view_control.setAngle(0);
+            }
             viewHolder.img_eidt.setVisibility(View.INVISIBLE);
         }
     }
