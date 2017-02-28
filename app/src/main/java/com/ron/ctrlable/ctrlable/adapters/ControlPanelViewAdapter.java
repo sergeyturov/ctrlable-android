@@ -69,7 +69,6 @@ public class ControlPanelViewAdapter extends RecyclerView.Adapter<ControlPanelVi
         viewHolder.img_eidt.getLayoutParams().width = device_width / ConfigurationClass.rows;
         viewHolder.img_eidt.getLayoutParams().height = controlview_height / ConfigurationClass.columns;
 
-        viewHolder.img_select.setBackgroundResource(R.drawable.control_select_mark);
         viewHolder.img_select.getLayoutParams().width = device_width / ConfigurationClass.rows;
         viewHolder.img_select.getLayoutParams().height = controlview_height / ConfigurationClass.columns;
 

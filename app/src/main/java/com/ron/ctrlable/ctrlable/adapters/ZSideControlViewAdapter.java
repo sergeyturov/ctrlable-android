@@ -69,7 +69,6 @@ public class ZSideControlViewAdapter extends RecyclerView.Adapter<ZSideControlVi
         viewHolder.img_eidt.getLayoutParams().width = device_width / 4;
         viewHolder.img_eidt.getLayoutParams().height = cell_height;
 
-        viewHolder.img_select.setBackgroundResource(R.drawable.control_select_mark);
         viewHolder.img_select.getLayoutParams().width = device_width / 4;
         viewHolder.img_select.getLayoutParams().height = cell_height;
 
