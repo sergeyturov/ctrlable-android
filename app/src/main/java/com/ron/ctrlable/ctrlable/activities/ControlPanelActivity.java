@@ -56,6 +56,7 @@ import static com.ron.ctrlable.ctrlable.views.ControlPanelView.UserInteractionMo
 
 public class ControlPanelActivity extends CustomActivity {
 
+    public RelativeLayout topMenuView;
     public Button setupControlButton;
     public Button gridButton;
     public Button upButton;
@@ -85,6 +86,7 @@ public class ControlPanelActivity extends CustomActivity {
     static Context context;
 
     int device_width;
+    int device_height;
     private int beginPosX = 0;
     private int beginPosY = 0;
     private int endPosX = 0;
@@ -189,12 +191,13 @@ public class ControlPanelActivity extends CustomActivity {
         zSideControlView = (ControlPanelView) findViewById(R.id.side_recycler_view);
         zSideControlView.setLayoutManager(1);
 
-        sideAdapter = new ZSideControlViewAdapter(ControlPanelActivity.this, controlView.getMeasuredHeight(), pcm);
+        sideAdapter = new ZSideControlViewAdapter(ControlPanelActivity.this, device_height-134, pcm);
         zSideControlView.setSideViewAdapter(sideAdapter, getApplicationContext());
     }
 
     public void setPanelControlMode() {
 
+        topMenuView = (RelativeLayout) findViewById(R.id.top_menu_view);
         setupControlButton = (Button) findViewById(R.id.setup_control_button);
         setupControlButton.setBackgroundResource(R.drawable.settings);
         gridButton = (Button) findViewById(R.id.grid_button);
@@ -305,6 +308,7 @@ public class ControlPanelActivity extends CustomActivity {
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         device_width = displaymetrics.widthPixels;
+        device_height = displaymetrics.heightPixels;
 
         if (ConfigurationClass.isTablet(this)) {
             grid_rows = getResources().getInteger(R.integer.tablet_grid_rows);
@@ -329,11 +333,12 @@ public class ControlPanelActivity extends CustomActivity {
                     rightButton.setVisibility(View.INVISIBLE);
                 }
 
-                setSideViewAdapter();
-
                 // Get the Rects of the each recyclerview items.
                 setItemRects();
                 setSideItemRects();
+
+                setSideViewAdapter();
+
 
                 zSideControlView.setOnTouchListener(new View.OnTouchListener() {
                     @Override
@@ -351,7 +356,7 @@ public class ControlPanelActivity extends CustomActivity {
                                     }
                                 }
                                 if (selectedSideViewList.size() > 0 && pcm == UserInteractionLayout) {
-                                    setControlPanelPagerAdapter();
+                                    setControlPanelPagerAdapter();                  // reset the home panel.
                                     sideAdapter.selectMultiControlViews(selectedSideViewList);
 
                                     setAddControlsMode(selectedSideViewList, 0, getString(R.string.side_view));
@@ -379,7 +384,7 @@ public class ControlPanelActivity extends CustomActivity {
                                 }
 
                                 if (selectedSideViewList.size() > 0 && pcm == UserInteractionLayout) {
-                                    setControlPanelPagerAdapter();
+                                    setControlPanelPagerAdapter();                  // reset the home panel.
                                     sideAdapter.selectMultiControlViews(selectedSideViewList);
 
                                     setAddControlsMode(selectedSideViewList, 0, getString(R.string.side_view));
@@ -567,21 +572,26 @@ public class ControlPanelActivity extends CustomActivity {
     // Initialize the Rect of the each Recyclerview Items.
     private void setItemRects() {
         itemRects = new Rect[grid_rows * grid_columns];
+        int viewHeight = device_height - topMenuView.getHeight();
         for (int i = 0; i < grid_rows * grid_columns; i++) {
             itemRects[i] = new Rect((i % grid_rows) * device_width / grid_rows,
-                    (i / grid_rows) * zControlView.getHeight() / grid_columns,
+                    (i / grid_rows) * viewHeight / grid_columns,
                     (i % grid_rows + 1) * device_width / grid_rows,
-                    (i / grid_rows + 1) * zControlView.getHeight() / grid_columns);
+                    (i / grid_rows + 1) * viewHeight / grid_columns);
         }
     }
 
     private void setSideItemRects() {
         sideItemRects = new Rect[4];
+        int sideViewHeight = device_height - 134;
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            sideViewHeight = device_width;
+        }
         for (int i = 0; i < 4; i++) {
             sideItemRects[i] = new Rect(0,
-                    i * zControlView.getHeight() / 4,
+                    i * sideViewHeight / 4,
                     device_width / 2,
-                    (i + 1) * zControlView.getHeight() / 4);
+                    (i + 1) * sideViewHeight / 4);
         }
     }
 
@@ -637,29 +647,15 @@ public class ControlPanelActivity extends CustomActivity {
         public void onOrientationChanged(int orientation) {
             if ((orientation < 35 || orientation > 325) && device_rotation != ROTATION_O) { // PORTRAIT
                 device_rotation = ROTATION_O;
-//                setControlPanelRotation(0);
-//                resetGrid();
-//                vp.setAdapter(pageAdapter);
 
             } else if (orientation > 145 && orientation < 215 && device_rotation != ROTATION_180) { // REVERSE PORTRAIT
                 device_rotation = ROTATION_180;
-                setControlPanelRotation(0);
-                resetGrid();
-                vp.setAdapter(pageAdapter);
 
             } else if (orientation > 55 && orientation < 125 && device_rotation != ROTATION_270) { // REVERSE LANDSCAPE
                 device_rotation = ROTATION_90;
-                setControlPanelRotation(90);
-                resetGrid();
-                setControlPanelPagerAdapter();
-//                vp.setAdapter(pageAdapter);
 
             } else if (orientation > 235 && orientation < 305 && device_rotation != ROTATION_90) { //LANDSCAPE
                 device_rotation = ROTATION_270;
-                setControlPanelRotation(90);
-                resetGrid();
-                setControlPanelPagerAdapter();
-//                vp.setAdapter(pageAdapter);
             }
         }
     }
