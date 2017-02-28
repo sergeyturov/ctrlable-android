@@ -572,11 +572,16 @@ public class ControlPanelActivity extends CustomActivity {
     // Initialize the Rect of the each Recyclerview Items.
     private void setItemRects() {
         itemRects = new Rect[grid_rows * grid_columns];
-        int viewHeight = device_height - topMenuView.getHeight();
+        int viewHeight = device_width;
+        int viewWidth = device_height-134;
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            viewHeight = device_height-134;
+            viewWidth = device_width;
+        }
         for (int i = 0; i < grid_rows * grid_columns; i++) {
-            itemRects[i] = new Rect((i % grid_rows) * device_width / grid_rows,
+            itemRects[i] = new Rect((i % grid_rows) * viewWidth / grid_rows,
                     (i / grid_rows) * viewHeight / grid_columns,
-                    (i % grid_rows + 1) * device_width / grid_rows,
+                    (i % grid_rows + 1) * viewWidth / grid_rows,
                     (i / grid_rows + 1) * viewHeight / grid_columns);
         }
     }
